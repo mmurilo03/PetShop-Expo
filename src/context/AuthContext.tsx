@@ -1,8 +1,6 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { getSavedUser, saveUser } from "../storage/storage";
 import { api } from "../api/api";
-import { useNavigation } from "@react-navigation/native";
 
 export interface User {
     name: string,
@@ -12,6 +10,7 @@ export interface User {
 interface AuthContextProps {
     user: User
     login: (nome: string, senha: string) => void
+    logout: () => void
     validToken: boolean
 }
 
@@ -32,9 +31,20 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
             if (data.token) {
                 setUser({ name: data.nome, token: data.token });
                 saveUser({ name: data.nome, token: data.token });
+                setValidToken(true);
             }
         } catch (error) {
             throw error;
+        }
+    }
+
+    const logout = () => {
+        try {
+            setUser({ name: "", token: ""});
+            saveUser({ name: "", token: ""});
+            setValidToken(false);
+            } catch (error) {
+
         }
     }
 
@@ -66,7 +76,7 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
 
 
     return (
-    <AuthContext.Provider value={{ user, login, validToken }}>
+    <AuthContext.Provider value={{ user, login, logout, validToken }}>
         {children}
     </AuthContext.Provider>
     )
