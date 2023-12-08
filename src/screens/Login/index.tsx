@@ -1,11 +1,11 @@
-import { Alert, Image, View } from "react-native"
-import { styles } from "./styles"
-import { useNavigation } from "@react-navigation/native"
+import { Image, View } from "react-native";
+import { styles } from "./styles";
+import { useNavigation } from "@react-navigation/native";
 import { Button } from "../../components/Button/Index";
 import { Input } from "../../components/Input";
 import { defaultTheme } from "../../global/styles/themes";
-import { api } from "../../api/api";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 interface LoginProps {
     email: string,
@@ -19,19 +19,17 @@ export const Login = () => {
 
     const navigation = useNavigation();
 
+    const { user, login } = useContext(AuthContext);
+    
     const navigateHome = () => {
         navigation.navigate("Home");
     }
 
-    const login = async ({email, senha}: LoginProps) => {
-        const res = await api.post("/responsavel/login", {email, senha});
-
-        if(res.data.token) {
-            navigateHome()
-        } else {
-            Alert.alert("Usuário ou senha incorretos!");
+    useEffect(() => {
+        if (user.token) {
+            navigateHome();
         }
-    }
+    })
 
     return (
         <View style={styles.container}>
@@ -39,7 +37,7 @@ export const Login = () => {
                 <Image source={require("../../images/Logo-horizontal.png")} />
                 <Input onChangeText={(text) => setEmail(text)} label="Email" placeholder="Email"/>
                 <Input onChangeText={(text) => setSenha(text)} label="Senha" placeholder="Senha" isPassword={true}/>
-                <Button color={defaultTheme.COLORS.blueMain} height={0.06} width={0.6} text="Login" onPress={async () => await login({email, senha})}></Button>
+                <Button color={defaultTheme.COLORS.blueMain} height={0.06} width={0.6} text="Login" onPress={() => login(email, senha)}></Button>
             </View>
         </View>
     )
