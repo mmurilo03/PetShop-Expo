@@ -1,6 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { Login } from './src/screens/Login';
+import 'react-native-gesture-handler';
 import { Routes } from './src/routes';
 import { AuthComponent } from './src/context/AuthContext';
 

@@ -9,16 +9,16 @@ export const Home = () => {
 
     const navigation = useNavigation();
 
-    const { validToken } = useContext(AuthContext);
+    const { validToken, logout } = useContext(AuthContext);
 
     const navigateLogin = () => {
         navigation.navigate("Login");
     }
 
     const navigateLogout = () => {
-        saveUser({name: "", token: ""})
+        logout();
         navigation.navigate("Login");
-    }
+    } 
 
     useEffect(() => {
         if (!validToken) {

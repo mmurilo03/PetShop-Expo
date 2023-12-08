@@ -7,7 +7,8 @@ export const styles = StyleSheet.create({
         borderColor: "#000000",
         borderWidth: 0.5,
         padding: 5,
-        paddingLeft: 5
+        paddingLeft: 5,
+        borderRadius: 5
     },
 
     label: {
