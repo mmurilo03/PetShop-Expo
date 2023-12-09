@@ -15,14 +15,23 @@ export const CustomMenu = (props: DrawerContentComponentProps) => {
     const navigation = useNavigation();
 
     const [image, setImage] = useState<string>();
+    const [userHasImage, setUserHasImage] = useState<boolean>(false);
 
-    const getUserImage = () => {
-        
+    const getUserImage = async () => {        
         try {
-            const image = api.getUri({url: `images/${user.img}`});
-            setImage(image)
-            return image
-        } catch (error) {
+            await api.get(`images/${user.img}`);
+            setUserHasImage(true);
+        } catch (e) {            
+            setUserHasImage(false);
+        }
+        
+        if (userHasImage) {
+            try {
+                const image = api.getUri({url: `images/${user.img}`});
+                setImage(image)
+                return image
+            } catch (error) {
+            }
         }
     }
 
@@ -39,7 +48,7 @@ export const CustomMenu = (props: DrawerContentComponentProps) => {
     <View style={styles.container}>
         <DrawerContentScrollView style={styles.content} {...props}>
             <View style={styles.imageContainer}>
-                <Image style={styles.image} source={{uri: image}} />
+                <Image style={styles.image} source={userHasImage ? {uri: image} : require("../../images/abstract-user-icon-3.png")} />
             </View>
             <DrawerItemList {...props} />
             <View style={styles.buttonContainer}>
