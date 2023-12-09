@@ -1,11 +1,12 @@
 import { Image, View } from "react-native";
 import { styles } from "./styles";
-import { useNavigation } from "@react-navigation/native";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { defaultTheme } from "../../global/styles/themes";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface LoginProps {
     email: string,
@@ -17,17 +18,15 @@ export const Login = () => {
     const [email, setEmail] = useState<string>("");
     const [senha, setSenha] = useState<string>("");
 
-    const { validToken } = useContext(AuthContext);
+    const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
-    const navigation = useNavigation();
-
-    const { user, login } = useContext(AuthContext);
+    const { login, validToken } = useContext(AuthContext);
     
     const navigateHome = () => {
-        navigation.navigate("Home");
+        navigation.navigate("NavigationDrawer");
     }
 
-    useEffect(() => {        
+    useEffect(() => {
         if (validToken) {
             navigateHome();
         }

@@ -7,6 +7,7 @@ import { CustomMenu } from '../../components/CustomMenu';
 import { Dimensions } from 'react-native';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
+import { Home } from '../../screens/Home';
 
 const {Navigator, Screen} = createDrawerNavigator();
 
@@ -27,7 +28,7 @@ export function NavigationDrawer(){
     >
       <Screen
       name="Página inicial"
-      component={NavigationStack} 
+      component={Home} 
       options={{ 
         drawerIcon: () => <Icon name='home' color={"black"} size={20} />,
         }}/>
