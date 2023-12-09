@@ -4,7 +4,8 @@ import { api } from "../api/api";
 
 export interface User {
     name: string,
-    token: string
+    token: string,
+    img: string,
 }
 
 interface AuthContextProps {
@@ -29,8 +30,8 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
         try {
             const { data } = await api.post("/responsavel/login", {email, senha});
             if (data.token) {
-                setUser({ name: data.nome, token: data.token });
-                saveUser({ name: data.nome, token: data.token });
+                setUser({ name: data.nome, token: data.token, img: data.img });
+                saveUser({ name: data.nome, token: data.token, img: data.img });
                 setValidToken(true);
             }
         } catch (error) {
@@ -40,8 +41,8 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
 
     const logout = () => {
         try {
-            setUser({ name: "", token: ""});
-            saveUser({ name: "", token: ""});
+            setUser({ name: "", token: "", img: ""});
+            saveUser({ name: "", token: "", img: ""});
             setValidToken(false);
             } catch (error) {
 
@@ -55,8 +56,8 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
             return setUser(user);
         }
         
-        setUser({ name: "", token: "" });
-        saveUser({ name: "", token: "" });
+        setUser({ name: "", token: "", img: "" });
+        saveUser({ name: "", token: "", img: "" });
     }
 
     const verifyToken = async (token: string) => {
