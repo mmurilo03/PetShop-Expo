@@ -8,6 +8,7 @@ import { Dimensions } from 'react-native';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { Home } from '../../screens/Home';
+import { defaultTheme } from '../../global/styles/themes';
 
 const {Navigator, Screen} = createDrawerNavigator();
 
@@ -22,8 +23,8 @@ export function NavigationDrawer(){
         marginTop: 100,
         height:Dimensions.get('screen').height*0.5
       },
-      headerTitle: ""
-      // headerShown: showHeader
+      headerTitle: "",
+      headerShown: false
     })}
     >
       <Screen
@@ -32,13 +33,13 @@ export function NavigationDrawer(){
       options={{ 
         drawerIcon: () => <Icon name='home' color={"black"} size={20} />,
         }}/>
-        <Screen
+      <Screen
       name="Gerenciar"
       component={NavigationStack} 
       options={{ 
         drawerIcon: () => <Ionicons style={{ transform: [{rotate: "-90deg"}]}} name='options-outline' color={"black"} size={25} />,
         }}/>
-        <Screen
+      <Screen
       name="Configurações"
       component={NavigationStack} 
       options={{ 
