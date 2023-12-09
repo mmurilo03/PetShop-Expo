@@ -1,7 +1,6 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { getSavedUser, saveUser } from "../storage/storage";
 import { api } from "../api/api";
-import { jwtDecode } from "jwt-decode";
 
 export interface User {
     name: string,
@@ -14,7 +13,7 @@ interface AuthContextProps {
     login: (nome: string, senha: string) => void
     logout: () => void
     validToken: boolean
-    verifyToken: () => boolean
+    verifyToken: (token: string) => Promise<boolean>
 }
 
 interface AuthComponentProps {
@@ -53,8 +52,8 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
 
     const getUser = async () => {
         const user = await getSavedUser();
-        
-        if (user && await verifyToken()) {
+
+        if (user && await verifyToken(user.token)) {
             return setUser(user);
         }
         
@@ -62,16 +61,15 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
         saveUser({ name: "", token: "", img: "" });
     }
 
-    const verifyToken = () => {
-        try {
-            const decodedToken = jwtDecode(user.token);
-            if (decodedToken.exp && decodedToken.exp * 1000 > new Date().getTime()){
-                setValidToken(true)
-                return true;
-            }
+    const verifyToken = async (token: string) => {
+        try{
+            api.defaults.headers.common.Authorization = token;
+            const res = await api.get("/responsavel/verify");
+            
+            setValidToken(res.status == 200);
+            return res.status == 200;
+        } catch(error){
             setValidToken(false)
-            return false
-        } catch (e) {
             return false
         }
     }
