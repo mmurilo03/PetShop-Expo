@@ -1,18 +1,15 @@
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer"
-import { Image, Text, View } from "react-native"
+import { Image, View } from "react-native"
 import { styles } from "./styles"
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import { api } from "../../api/api"
 import { Button } from "../Button"
 import { defaultTheme } from "../../global/styles/themes"
-import { useNavigation } from "@react-navigation/native"
 
 export const CustomMenu = (props: DrawerContentComponentProps) => {
 
     const { user, logout } = useContext(AuthContext);
-
-    const navigation = useNavigation();
 
     const [image, setImage] = useState<string>();
     const [userHasImage, setUserHasImage] = useState<boolean>(false);
@@ -37,7 +34,6 @@ export const CustomMenu = (props: DrawerContentComponentProps) => {
 
     const navigateLogout = () => {
         logout();
-        navigation.navigate("Login");
     }
 
     useEffect(() => {

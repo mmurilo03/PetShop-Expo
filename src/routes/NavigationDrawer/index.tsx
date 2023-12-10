@@ -5,16 +5,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { NavigationStack } from '../NavigationStack';
 import { CustomMenu } from '../../components/CustomMenu';
 import { Dimensions } from 'react-native';
-import { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
-import { Home } from '../../screens/Home';
-import { defaultTheme } from '../../global/styles/themes';
 
 const {Navigator, Screen} = createDrawerNavigator();
 
 export function NavigationDrawer(){
-
-  // const { showHeader } = useContext(AuthContext);
 
   return (
     <Navigator drawerContent={ props => <CustomMenu {...props} />}
@@ -29,7 +23,7 @@ export function NavigationDrawer(){
     >
       <Screen
       name="Página inicial"
-      component={Home} 
+      component={NavigationStack} 
       options={{ 
         drawerIcon: () => <Icon name='home' color={"black"} size={20} />,
         }}/>

@@ -12,6 +12,7 @@ interface AuthContextProps {
     user: User
     login: (nome: string, senha: string) => void
     logout: () => void
+    loading: boolean
     validToken: boolean
     verifyToken: (token: string) => Promise<boolean>
 }
@@ -26,6 +27,7 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
 
     const [user, setUser] = useState<User>({} as User);
     const [validToken, setValidToken] = useState<boolean>(false as boolean);
+    const [loading, setLoading] = useState<boolean>(true as boolean);
 
     const login = async (email: string, senha: string) => {
         try {
@@ -54,9 +56,10 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
         const user = await getSavedUser();
 
         if (user && await verifyToken(user.token)) {
+            setLoading(false);
             return setUser(user);
         }
-        
+        setLoading(false);
         setUser({ name: "", token: "", img: "" });
         saveUser({ name: "", token: "", img: "" });
     }
@@ -80,7 +83,7 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
 
 
     return (
-    <AuthContext.Provider value={{ user, login, logout, validToken, verifyToken }}>
+    <AuthContext.Provider value={{ user, login, logout, validToken, verifyToken, loading }}>
         {children}
     </AuthContext.Provider>
     )

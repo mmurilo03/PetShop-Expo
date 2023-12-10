@@ -1,36 +1,17 @@
 import { Image, View } from "react-native";
 import { styles } from "./styles";
-import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { defaultTheme } from "../../global/styles/themes";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-interface LoginProps {
-    email: string,
-    senha: string
-}
 
 export const Login = () => {
 
     const [email, setEmail] = useState<string>("");
     const [senha, setSenha] = useState<string>("");
 
-    const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-
-    const { login, validToken } = useContext(AuthContext);
-    
-    const navigateHome = () => {
-        navigation.navigate("NavigationDrawer");
-    }
-
-    useEffect(() => {
-        if (validToken) {
-            navigateHome();
-        }
-    })
+    const { login } = useContext(AuthContext);
 
     return (
         <View style={styles.container}>
