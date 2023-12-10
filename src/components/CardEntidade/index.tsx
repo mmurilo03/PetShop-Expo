@@ -1,9 +1,10 @@
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, useCallback, useEffect, useState } from "react"
 import { Image } from "react-native"
 import { Text, View } from "react-native"
-import Icon from "react-native-vector-icons/FontAwesome5"
 import { api } from "../../api/api"
 import { styles } from "./styles"
+import Animated, { useSharedValue, useAnimatedStyle, withTiming} from "react-native-reanimated"
+import { useFocusEffect } from "@react-navigation/native"
 
 
 interface Entity {
@@ -17,6 +18,7 @@ export const CardEnditade = ({id, nome, imagem, children}: Entity) => {
 
     const [image, setImage] = useState<string>();
     const [entityHasImage, setEntityHasImage] = useState<boolean>(false);
+    const fadeAnim = useSharedValue(0);
 
     const getImage = async () => {        
         try {
@@ -35,13 +37,29 @@ export const CardEnditade = ({id, nome, imagem, children}: Entity) => {
             }
         }
     }
+
+    const callback = useCallback(() => {
+        fadeAnim.value = withTiming(0, {duration: 0}, () => {
+            fadeAnim.value = withTiming(1, {duration: 500})
+        });
+    }, [fadeAnim])
+
+    const reanimatedStyle = useAnimatedStyle (() => {
+        return {
+            opacity: fadeAnim.value,
+        }
+    })
     
     useEffect(() => {
         getImage();
     })
 
+    useFocusEffect(() => {
+        callback();
+    });
+
     return (
-        <View style={styles.container}>
+        <Animated.View style={[styles.container, reanimatedStyle ]}>
             <View style={styles.imgContainer}>
                 <Image style={styles.entityImg} source={entityHasImage ? {uri: image} : require("../../images/abstract-user-icon-3.png")} />
             </View>
@@ -53,6 +71,6 @@ export const CardEnditade = ({id, nome, imagem, children}: Entity) => {
                     {children}
                 </View>
             </View>
-        </View>
+        </Animated.View>
     )
 }
