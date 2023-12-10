@@ -13,6 +13,7 @@ import { api } from "../../api/api";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { CardGerenciamento } from "../../components/CardGerenciamento";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface Atendimento {
   id: number;
@@ -27,6 +28,8 @@ interface Atendimento {
 }
 
 export const GerenciarAtendimento = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+
   const drawer = useNavigation<DrawerActionHelpers<ParamListBase>>();
 
   const [atendimentos, setAtendimentos] = useState<Atendimento[]>(
@@ -82,7 +85,7 @@ export const GerenciarAtendimento = () => {
             width={0.35}
             iconColor={defaultTheme.COLORS.black}
             iconName="briefcase-medical"
-            onPress={() => {}}
+            onPress={() => {navigation.navigate("GerenciarResponsaveis")}}
             size={16}
             text="Responsaveis"
             textColor={defaultTheme.COLORS.black}
@@ -94,7 +97,7 @@ export const GerenciarAtendimento = () => {
             width={0.35}
             iconColor={defaultTheme.COLORS.black}
             iconName="paw"
-            onPress={() => {}}
+            onPress={() => {navigation.navigate("GerenciarPets")}}
             size={16}
             text="Pets"
             textColor={defaultTheme.COLORS.black}
@@ -115,32 +118,32 @@ export const GerenciarAtendimento = () => {
           />
         </View>
         <ScrollView contentContainerStyle={styles.scrollStyle}>
-        {atendimentos.length > 0 ? (
-          atendimentos.map((atendimento) => {
-            return (
-              <CardGerenciamento
-                id={atendimento.id}
-                imagem={atendimento.imagem}
-                nome={atendimento.nome}
-                key={atendimento.id}
-              >
-                <Text
-                  style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
+          {atendimentos.length > 0 ? (
+            atendimentos.map((atendimento) => {
+              return (
+                <CardGerenciamento
+                  id={atendimento.id}
+                  imagem={atendimento.imagem}
+                  nome={atendimento.nome}
+                  key={atendimento.id}
                 >
-                  {atendimento.tipo}
-                </Text>
-                <Text
-                  style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
-                >
-                  {atendimento.responsavel}
-                </Text>
-              </CardGerenciamento>
-            );
-          })
-        ) : (
-          <></>
-        )}
-            </ScrollView>
+                  <Text
+                    style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
+                  >
+                    {atendimento.tipo}
+                  </Text>
+                  <Text
+                    style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
+                  >
+                    {atendimento.responsavel}
+                  </Text>
+                </CardGerenciamento>
+              );
+            })
+          ) : (
+            <></>
+          )}
+        </ScrollView>
       </View>
     </>
   );
