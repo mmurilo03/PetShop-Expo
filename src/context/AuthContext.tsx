@@ -6,6 +6,7 @@ export interface User {
     name: string,
     token: string,
     img: string,
+    email: string
 }
 
 interface AuthContextProps {
@@ -33,8 +34,8 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
         try {
             const { data } = await api.post("/responsavel/login", {email, senha});
             if (data.token) {
-                setUser({ name: data.nome, token: data.token, img: data.img });
-                saveUser({ name: data.nome, token: data.token, img: data.img });
+                setUser({ name: data.nome, token: data.token, img: data.img, email: data.email });
+                saveUser({ name: data.nome, token: data.token, img: data.img, email: data.email });
                 setValidToken(true);
             }
         } catch (error) {
@@ -44,8 +45,8 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
 
     const logout = () => {
         try {
-            setUser({ name: "", token: "", img: ""});
-            saveUser({ name: "", token: "", img: ""});
+            setUser({ name: "", token: "", img: "", email: ""});
+            saveUser({ name: "", token: "", img: "", email: ""});
             setValidToken(false);
             } catch (error) {
 
@@ -60,8 +61,8 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
             return setUser(user);
         }
         setLoading(false);
-        setUser({ name: "", token: "", img: "" });
-        saveUser({ name: "", token: "", img: "" });
+        setUser({ name: "", token: "", img: "", email: "" });
+        saveUser({ name: "", token: "", img: "", email: "" });
     }
 
     const verifyToken = async (token: string) => {
