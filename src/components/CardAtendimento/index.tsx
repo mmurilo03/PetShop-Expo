@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Image } from "react-native"
 import { Text, View } from "react-native"
 import Icon from "react-native-vector-icons/FontAwesome5"
 import { api } from "../../api/api"
 import { styles } from "./styles"
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated"
+import { useFocusEffect } from "@react-navigation/native"
 
 
 interface Atendimento {
@@ -24,6 +26,7 @@ export const CardAtendimento = ({id, tipo, descricao, data, responsavel, nome, s
 
     const [image, setImage] = useState<string>();
     const [petHasImage, setPetHasImage] = useState<boolean>(false);
+    const fadeAnim = useSharedValue(0);
 
     const getPetImage = async () => {        
         try {
@@ -43,6 +46,18 @@ export const CardAtendimento = ({id, tipo, descricao, data, responsavel, nome, s
         }
     }
 
+    const callback = useCallback(() => {
+        fadeAnim.value = withTiming(0, {duration: 0}, () => {
+            fadeAnim.value = withTiming(1, {duration: 1000})
+        });
+    }, [fadeAnim])
+
+    const reanimatedStyle = useAnimatedStyle (() => {
+        return {
+            opacity: fadeAnim.value,
+        }
+    })
+
     useEffect(() => {
         let temp = data.split("T")[0].split("-");
         setDataAtendimento([temp[2], temp[1], temp[0]])
@@ -52,8 +67,13 @@ export const CardAtendimento = ({id, tipo, descricao, data, responsavel, nome, s
         getPetImage();
     })
 
+
+    useFocusEffect(() => {
+        callback();
+    });
+
     return (
-        <View style={styles.container}>
+        <Animated.View style={[styles.container, reanimatedStyle ]}>
             <View style={styles.imgContainer}>
                 <Image style={styles.atendimentoImg} source={petHasImage ? {uri: image} : require("../../images/kisspng-cat-computer-icons-user-profile-5ae8658e7a9b63.4256720315251797905022.png")} />
             </View>
@@ -72,6 +92,6 @@ export const CardAtendimento = ({id, tipo, descricao, data, responsavel, nome, s
                 <Text style={styles.atendimentoTypeText}>{responsavel}</Text>
                 <Text style={styles.atendimentoTypeText}>{`${dataAtendimento[0]}/${dataAtendimento[1]}/${dataAtendimento[2]}`}</Text>
             </View>
-        </View>
+        </Animated.View>
     )
 }
