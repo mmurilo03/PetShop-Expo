@@ -6,6 +6,7 @@ import { NavigationStack } from '../NavigationStack';
 import { CustomMenu } from '../../components/CustomMenu';
 import { Dimensions } from 'react-native';
 import { NavigationStackGerenciar } from '../NavigationStackGerenciar';
+import { EditResponsavel } from '../../screens/EditResponsavel';
 
 const {Navigator, Screen} = createDrawerNavigator();
 
@@ -37,7 +38,7 @@ export function NavigationDrawer(){
         }}/>
       <Screen
       name="Configurações"
-      component={NavigationStack} 
+      component={EditResponsavel} 
       options={{ 
         drawerIcon: () => <Icon name='cog' color={"black"} size={20} />,
         }}/>
