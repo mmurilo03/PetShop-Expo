@@ -5,6 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { NavigationStack } from '../NavigationStack';
 import { CustomMenu } from '../../components/CustomMenu';
 import { Dimensions } from 'react-native';
+import { NavigationStackGerenciar } from '../NavigationStackGerenciar';
 
 const {Navigator, Screen} = createDrawerNavigator();
 
@@ -30,7 +31,7 @@ export function NavigationDrawer(){
         }}/>
       <Screen
       name="Gerenciar"
-      component={NavigationStack} 
+      component={NavigationStackGerenciar} 
       options={{ 
         drawerIcon: () => <Ionicons style={{ transform: [{rotate: "-90deg"}]}} name='options-outline' color={"black"} size={25} />,
         }}/>
