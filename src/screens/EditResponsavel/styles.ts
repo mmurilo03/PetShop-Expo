@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
         justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
-        height: Dimensions.get("window").height * 0.6,
+        height: Dimensions.get("window").height * 1.2,
         borderRadius: 5,
         gap: 20
     }
