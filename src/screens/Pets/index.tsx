@@ -15,25 +15,26 @@ import { CardEnditade } from "../../components/CardEntidade";
 interface Entity {
     nome: string,
     imagem: string,
-    email: string,
-    funcao: string,
+    tutor: string,
+    telefone: string,
+    endereco: string,
     id: number,
     children: ReactNode
 }
 
-export const Responsaveis = () => {
+export const Pets = () => {
 
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
     const drawer = useNavigation<DrawerActionHelpers<ParamListBase>>();
 
     const { user, validToken, logout } = useContext(AuthContext);
 
-    const [responsaveis, setResponsaveis] = useState<Entity[]>([] as Entity[]);
+    const [pets, setPets] = useState<Entity[]>([] as Entity[]);
 
-    const getResponsaveis = async () => {
+    const getPets = async () => {
         api.defaults.headers.common.Authorization = user.token;
-        const res = await api.get("/responsavel");
-        setResponsaveis(res.data.responsaveis);
+        const res = await api.get("/pet");
+        setPets(res.data.pets);
     }
 
     const navigateLogout = () => {
@@ -48,7 +49,7 @@ export const Responsaveis = () => {
     })
 
     useEffect(() => {
-        getResponsaveis();        
+        getPets();        
     }, [])
 
     return (
@@ -73,38 +74,39 @@ export const Responsaveis = () => {
                 textColor={defaultTheme.COLORS.black}
                 />
                 <ButtonTextIcon 
-                color={defaultTheme.COLORS.blueMain}
-                fontSize={16}
-                height={0.04}
-                width={0.35}
-                iconColor={defaultTheme.COLORS.white}
-                iconName="briefcase-medical"
-                onPress={() => {}}
-                size={16}
-                text="Responsaveis"
-                textColor={defaultTheme.COLORS.white}
-                />
-                <ButtonTextIcon 
                 color={defaultTheme.COLORS.gray}
                 fontSize={16}
                 height={0.04}
                 width={0.35}
                 iconColor={defaultTheme.COLORS.black}
+                iconName="briefcase-medical"
+                onPress={() => {navigation.navigate("Responsaveis")}}
+                size={16}
+                text="Responsaveis"
+                textColor={defaultTheme.COLORS.black}
+                />
+                <ButtonTextIcon 
+                color={defaultTheme.COLORS.blueMain}
+                fontSize={16}
+                height={0.04}
+                width={0.35}
+                iconColor={defaultTheme.COLORS.gray}
                 iconName="paw"
-                onPress={() => {navigation.navigate("Pets")}}
+                onPress={() => {}}
                 size={16}
                 text="Pets"
-                textColor={defaultTheme.COLORS.black}
+                textColor={defaultTheme.COLORS.gray}
                 />
             </ScrollView>
             <ScrollView contentContainerStyle={styles.scrollStyle}>
-            {responsaveis.length > 0 ? responsaveis.map((responsavel) => {
-                return (<CardEnditade id={responsavel.id}
-                    imagem={responsavel.imagem}
-                    nome={responsavel.nome}
-                    key={responsavel.id}>  
-                        <Text>Email: {responsavel.email}</Text>
-                        <Text>Função: {responsavel.funcao}</Text>
+            {pets.length > 0 ? pets.map((pet) => {
+                return (<CardEnditade id={pet.id}
+                    imagem={pet.imagem}
+                    nome={pet.nome}
+                    key={pet.id}>  
+                        <Text>Tutor: {pet.tutor}</Text>
+                        <Text>Telefone: {pet.telefone}</Text>
+                        <Text>Endereço: {pet.endereco}</Text>
                     </CardEnditade> )
             }) : <></>}
             </ScrollView>
