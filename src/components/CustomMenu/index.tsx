@@ -1,5 +1,5 @@
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer"
-import { Image, View } from "react-native"
+import { Image, Text, View } from "react-native"
 import { styles } from "./styles"
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
@@ -45,6 +45,7 @@ export const CustomMenu = (props: DrawerContentComponentProps) => {
         <DrawerContentScrollView style={styles.content} {...props}>
             <View style={styles.imageContainer}>
                 <Image style={styles.image} source={userHasImage ? {uri: image} : require("../../images/abstract-user-icon-3.png")} />
+                <Text style={styles.username}>{user.name}</Text>
             </View>
             <DrawerItemList {...props} />
             <View style={styles.buttonContainer}>
