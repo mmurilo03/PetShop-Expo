@@ -14,8 +14,9 @@ export function NavigationDrawer(){
     <Navigator drawerContent={ props => <CustomMenu {...props} />}
     screenOptions={({
       drawerStyle: {
-        marginTop: 100,
-        height:Dimensions.get('screen').height*0.5
+        marginTop: Dimensions.get('screen').height*0.13,
+        height:Dimensions.get('screen').height*0.55,
+        borderRadius: 5
       },
       headerTitle: "",
       headerShown: false
