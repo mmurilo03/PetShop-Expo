@@ -26,6 +26,7 @@ export const styles = StyleSheet.create({
         gap: 10,
         paddingTop: 14,
         paddingLeft: "10%",
+        paddingRight: "10%",
         marginBottom: 20
     },
     mainButton: {
