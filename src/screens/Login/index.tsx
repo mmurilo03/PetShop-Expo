@@ -17,8 +17,8 @@ export const Login = () => {
         <View style={styles.container}>
             <View style={styles.form}>
                 <Image source={require("../../images/Logo-horizontal.png")} />
-                <Input onChangeText={(text) => setEmail(text)} label="Email" placeholder="Email"/>
-                <Input onChangeText={(text) => setSenha(text)} label="Senha" placeholder="Senha" isPassword={true}/>
+                <Input value={email} onChangeText={(text) => setEmail(text)} label="Email" placeholder="Email"/>
+                <Input value={senha} onChangeText={(text) => setSenha(text)} label="Senha" placeholder="Senha" isPassword={true}/>
                 <Button color={defaultTheme.COLORS.blueMain} height={0.06} width={0.6} text="Login" onPress={() => login(email, senha)}fontSize={16}
                 textColor={defaultTheme.COLORS.white}></Button>
             </View>
