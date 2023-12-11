@@ -8,10 +8,18 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
-import { useFocusEffect } from "@react-navigation/native";
+import {
+  ParamListBase,
+  useFocusEffect,
+  useNavigation,
+} from "@react-navigation/native";
 import { ButtonIcon } from "../ButtonIcon";
 import { defaultTheme } from "../../global/styles/themes";
 import { AuthContext } from "../../context/AuthContext";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Dialog } from "react-native-simple-dialogs";
+import { Input } from "../Input";
+import { Button } from "../Button";
 
 interface Entity {
   nome: string;
@@ -19,13 +27,23 @@ interface Entity {
   id: number;
   children: ReactNode;
   deleteFunc: (deleteId: number) => Promise<void>;
+  editFunc: (editedId: number, funcao: string) => Promise<void>;
 }
 
-export const CardGerenciamento = ({ id, nome, imagem, children, deleteFunc }: Entity) => {
+export const CardGerenciamento = ({
+  id,
+  nome,
+  imagem,
+  children,
+  deleteFunc,
+  editFunc,
+}: Entity) => {
   const { user } = useContext(AuthContext);
   const [image, setImage] = useState<string>();
   const [entityHasImage, setEntityHasImage] = useState<boolean>(false);
   const fadeAnim = useSharedValue(0);
+  const [editing, setEditing] = useState(false);
+  const [funcao, setFuncao] = useState("");
 
   const getImage = async () => {
     try {
@@ -57,13 +75,20 @@ export const CardGerenciamento = ({ id, nome, imagem, children, deleteFunc }: En
   });
 
   const deleteAlert = () => {
-    Alert.alert("Deletar responsável?", `Deletar: ${nome}?`, [{
+    Alert.alert("Deletar responsável?", `Deletar: ${nome}?`, [
+      {
         text: "Cancelar",
-        style: "cancel"
-    }, {
+        style: "cancel",
+      },
+      {
         text: "Sim",
-        onPress: () => deleteFunc(id)
-    }]);
+        onPress: () => deleteFunc(id),
+      },
+    ]);
+  };
+
+  const editAlert = () => {
+    setEditing(true);
   };
 
   useEffect(() => {
@@ -86,7 +111,18 @@ export const CardGerenciamento = ({ id, nome, imagem, children, deleteFunc }: En
           }
         />
       </View>
-      <View style={[styles.entityName, user.id != 1 ? {width: "81%", borderTopRightRadius: 5, borderBottomRightRadius: 5} : {}]}>
+      <View
+        style={[
+          styles.entityName,
+          user.id != 1
+            ? {
+                width: "81%",
+                borderTopRightRadius: 5,
+                borderBottomRightRadius: 5,
+              }
+            : {},
+        ]}
+      >
         <View style={styles.entityTitle}>
           <Text style={styles.cardText}>{nome}</Text>
         </View>
@@ -98,7 +134,9 @@ export const CardGerenciamento = ({ id, nome, imagem, children, deleteFunc }: En
             <ButtonIcon
               iconColor={defaultTheme.COLORS.white}
               iconName="pencil-alt"
-              onPress={() => {}}
+              onPress={() => {
+                editAlert();
+              }}
               size={40}
               height={Dimensions.get("screen").height * 0.1}
               width={Dimensions.get("screen").height * 0.06}
@@ -120,6 +158,50 @@ export const CardGerenciamento = ({ id, nome, imagem, children, deleteFunc }: En
             />
           </View>
         </>
+      ) : (
+        <></>
+      )}
+      {editing ? (
+        <Dialog
+          dialogStyle={styles.dialogView}
+          visible={editing}
+          title="Editar Função"
+          onTouchOutside={() => setEditing(false)}
+        >
+          <View>
+            <Input
+              label="Função"
+              onChangeText={(text) => setFuncao(text)}
+              placeholder="Digite a função"
+              value={funcao}
+              size={16}
+              width={0.76}
+            />
+            <View style={styles.dialogButtons}>
+              <Button
+                color={defaultTheme.COLORS.blueMain}
+                fontSize={16}
+                height={0.05}
+                text="Cancelar"
+                onPress={() => setEditing(false)}
+                textColor={defaultTheme.COLORS.white}
+                width={0.3}
+              />
+              <Button
+                color={defaultTheme.COLORS.blueMain}
+                fontSize={16}
+                height={0.05}
+                text="Salvar"
+                onPress={() => {
+                  editFunc(id, funcao);
+                  setEditing(false);
+                }}
+                textColor={defaultTheme.COLORS.white}
+                width={0.3}
+              />
+            </View>
+          </View>
+        </Dialog>
       ) : (
         <></>
       )}
