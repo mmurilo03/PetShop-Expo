@@ -6,17 +6,12 @@ export const styles = StyleSheet.create({
 
     container: {
         width: Dimensions.get("screen").width * 0.9,
-        height: Dimensions.get("screen").height * 0.08,
+        height: Dimensions.get("screen").height * 0.1,
         alignItems: "center",
         marginBottom: 10,
         justifyContent: "flex-start",
         flexDirection: "row",
         borderRadius: 5,
-        borderBottom: 0.5,
-        borderStyle: "solid",
-        borderBottomWidth: 0.5,
-        borderRight: 1,
-        borderRightWidth: 1,
         backgroundColor: defaultTheme.COLORS.blueMain
     },
     
@@ -45,11 +40,10 @@ export const styles = StyleSheet.create({
     entityContent: {
         alignItems: "center",
         justifyContent: "space-around",
-        flexDirection: "row",
+        // flexDirection: "row",
     },
     
     cardText: {
-        backgroundColor: defaultTheme.COLORS.blueMain,
         textAlign: "center",
         minWidth: "100%",
         color: defaultTheme.COLORS.white,
@@ -61,6 +55,5 @@ export const styles = StyleSheet.create({
 
     actionIcons:{
         borderTopRightRadius: 5
-
     }
 })
