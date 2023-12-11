@@ -2,6 +2,7 @@ import {
     DrawerActionHelpers,
     ParamListBase,
     useNavigation,
+    useRoute,
   } from "@react-navigation/native";
   import { CustomHeader } from "../../components/CustomHeader";
   import { styles } from "./styles";
@@ -42,8 +43,10 @@ import {
     };
   
     useEffect(() => {
-      getResponsaveis();
-    }, []);
+      navigation.addListener("focus", () => {
+        getResponsaveis();
+      })
+    }, [navigation]);
   
     return (
       <>
@@ -108,7 +111,9 @@ import {
               width={0.5}
               iconColor={defaultTheme.COLORS.white}
               iconName="plus"
-              onPress={() => {}}
+              onPress={() => {
+                navigation.navigate("CadastrarResponsavel")
+              }}
               size={16}
               text="Cadastrar"
               textColor={defaultTheme.COLORS.white}

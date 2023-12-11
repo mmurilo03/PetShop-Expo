@@ -12,23 +12,22 @@ import { api } from "../../api/api";
 import { styles } from "./styles";
 import { ButtonIcon } from "../../components/ButtonIcon";
 import { defaultTheme } from "../../global/styles/themes";
-import { useNavigation } from "@react-navigation/native";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import * as ImagePicker from "expo-image-picker"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-export const EditResponsavel = () => {
-  const { user, updateUser } = useContext(AuthContext);
+export const CadastrarResponsavel = () => {
+  const { user } = useContext(AuthContext);
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
-  const [nome, setNome] = useState<string>(user.name);
-  const [email, setEmail] = useState<string>(user.email);
-  const [funcao, setFuncao] = useState<string>(user.funcao);
-  const [telefone, setTelefone] = useState<string>(user.telefone);
-  const [senhaAntiga, setSenhaAntiga] = useState<string>("");
-  const [novaSenha, setNovaSenha] = useState<string>("");
+  const [nome, setNome] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [funcao, setFuncao] = useState<string>("");
+  const [telefone, setTelefone] = useState<string>("");
+  const [senha, setSenha] = useState<string>("");
   const [confirmarNovaSenha, setConfirmarNovaSenha] = useState<string>("");
-
-  const navigation = useNavigation();
 
   const [image, setImage] = useState<string>();
 
@@ -43,13 +42,11 @@ export const EditResponsavel = () => {
         const config = {
             headers: { "content-type": "multipart/form-data" },
         };
-        form.append("id", `${user.id}`)
         form.append("nome", nome)
-        form.append("email", email)
         form.append("funcao", funcao)
         form.append("telefone", telefone)
-        form.append("senhaAntiga", senhaAntiga)
-        form.append("senhaNova", novaSenha)
+        form.append("email", email)
+        form.append("senha", senha)
         form.append("image", {
           name: newImage.split("/").pop()?.split("_").pop(),
           uri: newImage,
@@ -57,8 +54,8 @@ export const EditResponsavel = () => {
         } as any);
         api.defaults.headers.common.Authorization = user.token;
         
-        const newUser = await api.patch("/responsavel/edit", form, config);
-        updateUser(newUser.data.responsavelEdited)
+        const newUser = await api.post("/responsavel/create", form, config);
+        navigation.navigate("GerenciarResponsaveis", {update: true})
     } catch (e: any) {
         Alert.alert(e.response.data.error)
         
@@ -83,27 +80,9 @@ export const EditResponsavel = () => {
 
   const saveImage = (image: string) => {
     setNewImage(image);
+    setImage(image);
+    setUserHasImage(true);
   };
-
-  const getUserImage = async () => {
-    try {
-      await api.get(`images/${user.img}`);
-      setUserHasImage(true);
-    } catch (e) {
-      setUserHasImage(false);
-    }
-
-    if (userHasImage) {
-      try {
-        const image = api.getUri({ url: `images/${user.img}` });
-        setImage(image);
-        return image;
-      } catch (error) {}
-    }
-  };
-  useEffect(() => {
-    getUserImage();
-  });
 
   return (
     <>
@@ -113,8 +92,8 @@ export const EditResponsavel = () => {
           <ButtonIcon
             iconColor={defaultTheme.COLORS.black}
             iconName="arrow-left"
-            onPress={() => {
-              navigation.goBack();
+            onPress={() => {              
+              navigation.navigate("GerenciarResponsaveis", {update: true})
             }}
             size={50}
           />
@@ -145,10 +124,9 @@ export const EditResponsavel = () => {
             <Input label="Email" value={email} onChangeText={(text) => setEmail(text)} placeholder="Email" size={16}/>
             <Input label="Funcao" value={funcao} onChangeText={(text) => setFuncao(text)} placeholder="Funcao" size={16}/>
             <Input label="Telefone" value={telefone} onChangeText={(text) => setTelefone(text)} placeholder="Telefone" size={16}/>
-            <Input label="Senha antiga" value={senhaAntiga} onChangeText={(text) => setSenhaAntiga(text)} placeholder="Senha antiga" isPassword={true} size={16}/>
-            <Input label="Nova senha" value={novaSenha} onChangeText={(text) => setNovaSenha(text)} placeholder="Nova senha" isPassword={true} size={16}/>
+            <Input label="Senha" value={senha} onChangeText={(text) => setSenha(text)} placeholder="Senha" isPassword={true} size={16}/>
             <Input label="Confirmar senha" value={confirmarNovaSenha} onChangeText={(text) => setConfirmarNovaSenha(text)} placeholder="Confirmar senha" isPassword={true} size={16}/>
-            <Button color={defaultTheme.COLORS.blueMain} fontSize={16} height={0.06} width={0.3} onPress={() => sendForm()} text="Salvar" textColor={defaultTheme.COLORS.white}/>
+            <Button color={defaultTheme.COLORS.blueMain} fontSize={16} height={0.06} width={0.3} onPress={async () => await sendForm()} text="Salvar" textColor={defaultTheme.COLORS.white}/>
         </ScrollView>
         </KeyboardAvoidingView>
         </>

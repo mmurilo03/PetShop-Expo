@@ -45,8 +45,10 @@ export const GerenciarAtendimento = () => {
   };
 
   useEffect(() => {
-    getAtendimentos();
-  }, []);
+    navigation.addListener("focus", () => {
+      getAtendimentos();
+    })
+  }, [navigation]);
 
   return (
     <>
