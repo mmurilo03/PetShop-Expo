@@ -41,8 +41,11 @@ import {
     };
   
     useEffect(() => {
-      getPets();
-    }, []);
+      navigation.addListener("focus", () => {
+        getPets();
+      })
+    }, [navigation]);
+  
   
     return (
       <>

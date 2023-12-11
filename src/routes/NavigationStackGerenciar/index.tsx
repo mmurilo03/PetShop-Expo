@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GerenciarAtendimento } from '../../screens/GerenciarAtendimento';
 import { GerenciarResponsaveis } from '../../screens/GerenciarResponsaveis';
 import { GerenciarPets } from '../../screens/GerenciarPets';
+import { CadastrarResponsavel } from '../../screens/CadastrarResponsavel';
 
 const {Navigator, Screen} = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ export function NavigationStackGerenciar(){
       }}/>
       <Screen name="GerenciarResponsaveis" component={GerenciarResponsaveis} />
       <Screen name="GerenciarPets" component={GerenciarPets} />
+      <Screen name="CadastrarResponsavel" component={CadastrarResponsavel} />
     </Navigator>
   )
 }
