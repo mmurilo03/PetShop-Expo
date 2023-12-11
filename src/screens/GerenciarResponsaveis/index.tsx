@@ -46,6 +46,18 @@ export const GerenciarResponsaveis = () => {
     }
   }
 
+  const editResponsavel = async (editedId: number, funcao: string) => {
+    try {
+      api.defaults.headers.common.Authorization = user.token;
+      console.log(editedId, funcao);
+      
+      await api.patch(`/responsavel/editSimple/${editedId}`, { funcao: funcao });
+      getResponsaveis();
+    } catch (e: any) {
+        Alert.alert(e.response.data.error)
+    }
+  }
+
   const getResponsaveis = async () => {
     api.defaults.headers.common.Authorization = user.token;
     const res = await api.get("/responsavel");
@@ -139,6 +151,7 @@ export const GerenciarResponsaveis = () => {
                 nome={responsavel.nome}
                 key={responsavel.id}
                 deleteFunc={deleteResponsavel}
+                editFunc={editResponsavel}
               >
                 <Text
                   style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}

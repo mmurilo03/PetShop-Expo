@@ -55,5 +55,16 @@ export const styles = StyleSheet.create({
 
     actionIcons:{
         borderTopRightRadius: 5
+    },
+
+    dialogView:{
+        borderRadius: 5
+    },
+
+    dialogButtons:{
+        marginTop: 20,
+        flexDirection: "row",
+        justifyContent: "space-between"
     }
+
 })
