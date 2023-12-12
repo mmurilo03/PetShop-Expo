@@ -7,6 +7,12 @@ export const styles = StyleSheet.create({
         height: Dimensions.get('screen').height*0.1,
         backgroundColor: defaultTheme.COLORS.blueMain
     },
+    headerButtonsContainer: {
+        width: Dimensions.get('screen').width,
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginTop: 20
+    },
     imageContainer: {
         justifyContent:"center",
         alignItems:"center",
@@ -35,13 +41,13 @@ export const styles = StyleSheet.create({
         justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
-        height: Dimensions.get("window").height * 1.7,
+        height: Dimensions.get("window").height * 0.8,
         borderRadius: 5,
         gap: 20
     },
 
     mapContainer: {
-        width: Dimensions.get('screen').width*0.8,
-        height: Dimensions.get('screen').height*0.5,
-    }
+        width: Dimensions.get('screen').width*0.95,
+        height: Dimensions.get('screen').height*0.6,
+    },
 })

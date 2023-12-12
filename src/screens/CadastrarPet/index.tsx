@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import {
-    Alert,
+  Alert,
   Image,
   KeyboardAvoidingView,
   ScrollView,
@@ -15,15 +15,16 @@ import { defaultTheme } from "../../global/styles/themes";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
-import * as ImagePicker from "expo-image-picker"
+import * as ImagePicker from "expo-image-picker";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import MapView, { MapPressEvent, Marker } from "react-native-maps";
 import * as ExpoLocation from "expo-location";
+import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 
 type EnderecoCoord = {
-  latitude:number;
-  longitude:number;
-}
+  latitude: number;
+  longitude: number;
+};
 
 export const CadastrarPet = () => {
   const { user } = useContext(AuthContext);
@@ -35,7 +36,11 @@ export const CadastrarPet = () => {
   const [locationAccess, setLocationAccess] = useState(false);
   const [markerLocation, setMarkerLocation] = useState<EnderecoCoord>();
 
-  const [enderecoAtual, setEnderecoAtual] = useState<EnderecoCoord | null>(null);
+  const [enderecoAtual, setEnderecoAtual] = useState<EnderecoCoord | null>(
+    null
+  );
+
+  const [showForm, setShowForm] = useState(true);
 
   const [image, setImage] = useState<string>();
 
@@ -45,42 +50,44 @@ export const CadastrarPet = () => {
 
   const sendForm = async () => {
     if (nome.length <= 0) {
-      Alert.alert("Digite o nome do pet")
-      return
+      Alert.alert("Digite o nome do pet");
+      return;
     } else if (tutor.length <= 0) {
-      Alert.alert("Digite o nome do tutor")
-      return
+      Alert.alert("Digite o nome do tutor");
+      return;
     } else if (telefone.length <= 0) {
-      Alert.alert("Escolha uma data")
-      return
+      Alert.alert("Digite um telefone");
+      return;
     } else if (!markerLocation) {
-      Alert.alert("Digite uma descrição")
-      return
+      Alert.alert("Escolha o endereço no mapa");
+      return;
     }
     try {
-        const form = new FormData();
-        
-        const config = {
-            headers: { "content-type": "multipart/form-data" },
-        };
-        form.append("nome", nome)
-        form.append("tutor", tutor)
-        form.append("telefone", telefone)
-        form.append("endereco", `${markerLocation.latitude}|${markerLocation.longitude}`)
-        form.append("image", {
-          name: newImage.split("/").pop()?.split("_").pop(),
-          uri: newImage,
-          type: "image/png",
-        } as any);
-        api.defaults.headers.common.Authorization = user.token;
-        
-        await api.post("/pet/create", form, config);
-        navigation.navigate("GerenciarPets")
+      const form = new FormData();
+
+      const config = {
+        headers: { "content-type": "multipart/form-data" },
+      };
+      form.append("nome", nome);
+      form.append("tutor", tutor);
+      form.append("telefone", telefone);
+      form.append(
+        "endereco",
+        `${markerLocation.latitude}|${markerLocation.longitude}`
+      );
+      form.append("image", {
+        name: newImage.split("/").pop()?.split("_").pop(),
+        uri: newImage,
+        type: "image/png",
+      } as any);
+      api.defaults.headers.common.Authorization = user.token;
+
+      await api.post("/pet/create", form, config);
+      navigation.navigate("GerenciarPets");
     } catch (e: any) {
-        Alert.alert(e.response.data.error)
-        
+      Alert.alert(e.response.data.error);
     }
-  }
+  };
 
   const onButtonPress = async () => {
     try {
@@ -92,7 +99,7 @@ export const CadastrarPet = () => {
       });
 
       if (result.assets) {
-        saveImage(result.assets[0].uri);        
+        saveImage(result.assets[0].uri);
       }
     } catch (e) {}
   };
@@ -103,20 +110,20 @@ export const CadastrarPet = () => {
     setUserHasImage(true);
   };
 
-  async function getEnderecoAtual(){
+  async function getEnderecoAtual() {
     let { status } = await ExpoLocation.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert("O aplicativo precisa da sua localização.");
-          return;
-      }
-      setLocationAccess(true)
-      let location = await ExpoLocation.getCurrentPositionAsync();
-      setEnderecoAtual(location.coords);
+    if (status !== "granted") {
+      Alert.alert("O aplicativo precisa da sua localização.");
+      return;
+    }
+    setLocationAccess(true);
+    let location = await ExpoLocation.getCurrentPositionAsync();
+    setEnderecoAtual(location.coords);
   }
 
   useEffect(() => {
-    getEnderecoAtual()    
-  }, [locationAccess])
+    getEnderecoAtual();
+  }, [locationAccess]);
 
   return (
     <>
@@ -126,13 +133,43 @@ export const CadastrarPet = () => {
           <ButtonIcon
             iconColor={defaultTheme.COLORS.black}
             iconName="arrow-left"
-            onPress={() => {              
-              navigation.navigate("GerenciarPets")
+            onPress={() => {
+              navigation.navigate("GerenciarPets");
             }}
             size={50}
           />
         </View>
-        <View style={styles.imageContainer}>
+        <View style={styles.headerButtonsContainer}>
+          <ButtonTextIcon
+            color={defaultTheme.COLORS.blueMain}
+            fontSize={16}
+            height={0.05}
+            width={0.3}
+            iconColor={defaultTheme.COLORS.white}
+            iconName="clipboard-list"
+            onPress={() => {setShowForm(true)}}
+            size={16}
+            text="Formulário"
+            textColor={defaultTheme.COLORS.white}
+          />
+          <ButtonTextIcon
+            color={defaultTheme.COLORS.blueMain}
+            fontSize={16}
+            height={0.05}
+            width={0.3}
+            iconColor={defaultTheme.COLORS.white}
+            iconName="map-marked-alt"
+            onPress={() => {setShowForm(false)}}
+            size={16}
+            text="Endereco"
+            textColor={defaultTheme.COLORS.white}
+          />
+        </View>
+        
+        <ScrollView contentContainerStyle={styles.formPerfil}>
+          {showForm ? 
+          <>
+          <View style={styles.imageContainer}>
           <View>
             <Image
               style={styles.image}
@@ -152,35 +189,73 @@ export const CadastrarPet = () => {
             </View>
           </View>
         </View>
-
-        <ScrollView contentContainerStyle={styles.formPerfil}>
-            <Input label="Nome" value={nome} onChangeText={(text) => setNome(text)} placeholder="Nome" size={16}/>
-            <Input label="Tutor" value={tutor} onChangeText={(text) => setTutor(text)} placeholder="Tutor" size={16}/>
-            <Input label="Telefone" value={telefone} onChangeText={(text) => setTelefone(text)} placeholder="Telefone" size={16}/>
-            <View style={styles.mapContainer}>
-              {enderecoAtual ? 
-                <MapView style={styles.mapContainer} initialRegion={{
-                  latitude: enderecoAtual.latitude,
-                  longitude: enderecoAtual.longitude,
-                  latitudeDelta: 10,
-                  longitudeDelta: 10,
-                  }} 
-                  showsUserLocation
-                  showsMyLocationButton
-                  onPress={(mapLocation: MapPressEvent) => {
-                    const marker: EnderecoCoord = {
-                      latitude: mapLocation.nativeEvent.coordinate.latitude, 
-                      longitude: mapLocation.nativeEvent.coordinate.longitude
-                    }
-                    setMarkerLocation(marker)
-                  }}>
-                    {markerLocation && <Marker coordinate={{latitude: markerLocation.latitude, longitude: markerLocation.longitude}}/>}
-                  </MapView>
-              : <></>}
-            </View>
-            <Button color={defaultTheme.COLORS.blueMain} fontSize={16} height={0.06} width={0.3} onPress={async () => await sendForm()} text="Salvar" textColor={defaultTheme.COLORS.white}/>
+          <Input
+            label="Nome"
+            value={nome}
+            onChangeText={(text) => setNome(text)}
+            placeholder="Nome"
+            size={16}
+          />
+          <Input
+            label="Tutor"
+            value={tutor}
+            onChangeText={(text) => setTutor(text)}
+            placeholder="Tutor"
+            size={16}
+          />
+          <Input
+            label="Telefone"
+            value={telefone}
+            onChangeText={(text) => setTelefone(text)}
+            placeholder="Telefone"
+            size={16}
+          /></>
+        : 
+        <View style={styles.mapContainer}>
+          {enderecoAtual ? (
+            <MapView
+              style={styles.mapContainer}
+              initialRegion={{
+                latitude: enderecoAtual.latitude,
+                longitude: enderecoAtual.longitude,
+                latitudeDelta: 10,
+                longitudeDelta: 10,
+              }}
+              showsUserLocation
+              showsMyLocationButton
+              onPress={(mapLocation: MapPressEvent) => {
+                const marker: EnderecoCoord = {
+                  latitude: mapLocation.nativeEvent.coordinate.latitude,
+                  longitude: mapLocation.nativeEvent.coordinate.longitude,
+                };
+                setMarkerLocation(marker);
+              }}
+            >
+              {markerLocation && (
+                <Marker
+                  coordinate={{
+                    latitude: markerLocation.latitude,
+                    longitude: markerLocation.longitude,
+                  }}
+                />
+              )}
+            </MapView>
+          ) : (
+            <></>
+          )}
+        </View>}
+          
+          <Button
+            color={defaultTheme.COLORS.blueMain}
+            fontSize={16}
+            height={0.06}
+            width={0.3}
+            onPress={async () => await sendForm()}
+            text="Salvar"
+            textColor={defaultTheme.COLORS.white}
+          />
         </ScrollView>
-        </KeyboardAvoidingView>
-        </>
-    )
-}
+      </KeyboardAvoidingView>
+    </>
+  );
+};
