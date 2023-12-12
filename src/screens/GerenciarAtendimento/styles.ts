@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     container: {
@@ -27,7 +27,8 @@ export const styles = StyleSheet.create({
         paddingTop: 14,
         paddingLeft: "10%",
         paddingRight: "10%",
-        marginBottom: 20
+        marginBottom: 20,
+        height: Dimensions.get("screen").height * 0.06
     },
     mainButton: {
         justifyContent: "center",
