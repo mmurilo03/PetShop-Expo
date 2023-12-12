@@ -5,7 +5,7 @@ import {
 } from "@react-navigation/native";
 import { CustomHeader } from "../../components/CustomHeader";
 import { styles } from "./styles";
-import { ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
@@ -43,6 +43,16 @@ export const GerenciarAtendimento = () => {
     const res = await api.get("/atendimento");
     setAtendimentos(res.data.atendimentos);
   };
+
+  const deleteAtendimento = async (deleteId: number) => {
+    try {
+      api.defaults.headers.common.Authorization = user.token;
+      await api.delete(`/atendimento/delete/${deleteId}`, {data: { id: user.id }});
+      getAtendimentos();
+    } catch (e: any) {
+        Alert.alert(e.response.data.error)
+    }
+  }
 
   useEffect(() => {
     navigation.addListener("focus", () => {
@@ -128,7 +138,7 @@ export const GerenciarAtendimento = () => {
                   imagem={atendimento.imagem}
                   nome={atendimento.nome}
                   key={atendimento.id}
-                  deleteFunc={async (a: number) => {}}
+                  deleteFunc={deleteAtendimento}
                   editFunc={async (a: number) => {}}
                 >
                   <Text
