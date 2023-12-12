@@ -55,7 +55,7 @@ export const CadastrarResponsavel = () => {
         api.defaults.headers.common.Authorization = user.token;
         
         const newUser = await api.post("/responsavel/create", form, config);
-        navigation.navigate("GerenciarResponsaveis", {update: true})
+        navigation.navigate("GerenciarResponsaveis")
     } catch (e: any) {
         Alert.alert(e.response.data.error)
         

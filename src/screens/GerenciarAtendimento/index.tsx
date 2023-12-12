@@ -113,7 +113,7 @@ export const GerenciarAtendimento = () => {
             width={0.5}
             iconColor={defaultTheme.COLORS.white}
             iconName="plus"
-            onPress={() => {}}
+            onPress={() => {navigation.navigate("CadastrarAtendimento")}}
             size={16}
             text="Cadastrar"
             textColor={defaultTheme.COLORS.white}
@@ -128,6 +128,8 @@ export const GerenciarAtendimento = () => {
                   imagem={atendimento.imagem}
                   nome={atendimento.nome}
                   key={atendimento.id}
+                  deleteFunc={async (a: number) => {}}
+                  editFunc={async (a: number) => {}}
                 >
                   <Text
                     style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}

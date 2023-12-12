@@ -35,6 +35,6 @@ export const styles = StyleSheet.create({
     },
     scrollStyle: {
         paddingTop: 21,
-        paddingBottom: 70
+        paddingBottom: 200
     },
 })
