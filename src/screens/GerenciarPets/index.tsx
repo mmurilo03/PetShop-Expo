@@ -5,7 +5,7 @@ import {
 } from "@react-navigation/native";
 import { CustomHeader } from "../../components/CustomHeader";
 import { styles } from "./styles";
-import { ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
@@ -14,6 +14,7 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { CardGerenciamento } from "../../components/CardGerenciamento";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { CardGerenciamento2 } from "../../components/CardGerenciamento2";
 
 interface Entity {
   nome: string,
@@ -39,6 +40,16 @@ export const GerenciarPets = () => {
     const res = await api.get("/pet");
     setPets(res.data.pets);
   };
+
+  const deletePet = async (deleteId: number) => {
+    try {
+      api.defaults.headers.common.Authorization = user.token;
+      await api.delete(`/pet/delete/${deleteId}`);
+      getPets();
+    } catch (e: any) {
+        Alert.alert(e.response.data.error)
+    }
+  }
 
   useEffect(() => {
     navigation.addListener("focus", () => {
@@ -110,7 +121,7 @@ export const GerenciarPets = () => {
             width={0.5}
             iconColor={defaultTheme.COLORS.white}
             iconName="plus"
-            onPress={() => {}}
+            onPress={() => {navigation.navigate("CadastrarPet")}}
             size={16}
             text="Cadastrar"
             textColor={defaultTheme.COLORS.white}
@@ -120,20 +131,20 @@ export const GerenciarPets = () => {
         {pets.length > 0 ? (
           pets.map((pet) => {
             return (
-              <CardGerenciamento
+              <CardGerenciamento2
                 id={pet.id}
                 imagem={pet.imagem}
                 nome={pet.nome}
                 key={pet.id}
-                deleteFunc={async (a: number) => {}}
-                editFunc={async (a: number) => {}}
+                deleteFunc={deletePet}
+                editFunc={() => {}}
               >
                 <Text
                   style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
                 >
                   {pet.tutor}
                 </Text>
-              </CardGerenciamento>
+              </CardGerenciamento2>
             );
           })
         ) : (

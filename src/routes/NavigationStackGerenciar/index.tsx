@@ -5,6 +5,7 @@ import { GerenciarPets } from '../../screens/GerenciarPets';
 import { CadastrarResponsavel } from '../../screens/CadastrarResponsavel';
 import { CadastrarAtendimento } from '../../screens/CadastrarAtendimento';
 import { EditAtendimento } from '../../screens/EditAtendimento';
+import { CadastrarPet } from '../../screens/CadastrarPet';
 
 const {Navigator, Screen} = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ export function NavigationStackGerenciar(){
       <Screen name="CadastrarResponsavel" component={CadastrarResponsavel} />
       <Screen name="CadastrarAtendimento" component={CadastrarAtendimento} />
       <Screen name="EditAtendimento" component={EditAtendimento} />
+      <Screen name="CadastrarPet" component={CadastrarPet} />
     </Navigator>
   )
 }
