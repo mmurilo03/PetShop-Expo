@@ -158,18 +158,6 @@ export const EditAtendimento = () => {
             size={50}
           />
         </View>
-        <View style={styles.imageContainer}>
-          <View>
-            <Image
-              style={styles.image}
-              source={
-                userHasImage
-                  ? { uri: image }
-                  : require("../../images/abstract-user-icon-3.png")
-              }
-            />
-          </View>
-        </View>
 
         <ScrollView contentContainerStyle={styles.formPerfil}>
             <Picker style={styles.select} selectedValue={tipoAtendimento} onValueChange={(itemValue, itemIndex) => setTipoAtendimento(itemValue)}>

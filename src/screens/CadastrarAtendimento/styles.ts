@@ -7,19 +7,9 @@ export const styles = StyleSheet.create({
         height: Dimensions.get('screen').height*0.1,
         backgroundColor: defaultTheme.COLORS.blueMain
     },
-    imageContainer: {
-        justifyContent:"center",
-        alignItems:"center",
-        flexDirection: "row",
-    },
     goBackButton: {
         marginLeft: 10,
         marginTop: 10
-    },
-    image: {
-        width: Dimensions.get('screen').width*0.4,
-        height: Dimensions.get('screen').width*0.4,
-        borderRadius: 100
     },
     iconCam: {
         backgroundColor: defaultTheme.COLORS.white,
