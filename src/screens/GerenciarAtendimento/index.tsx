@@ -14,7 +14,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { CardGerenciamento } from "../../components/CardGerenciamento";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { CardGerenciamento2 } from "../../components/CardGerenciamento copy";
+import { CardGerenciamento2 } from "../../components/CardGerenciamento2";
 
 interface Atendimento {
   id: number;
