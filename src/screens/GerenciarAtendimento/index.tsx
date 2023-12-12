@@ -14,6 +14,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { CardGerenciamento } from "../../components/CardGerenciamento";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { CardGerenciamento2 } from "../../components/CardGerenciamento copy";
 
 interface Atendimento {
   id: number;
@@ -52,6 +53,10 @@ export const GerenciarAtendimento = () => {
     } catch (e: any) {
         Alert.alert(e.response.data.error)
     }
+  }
+
+  const editAtendimento = async (editedId: number) => {
+    navigation.navigate("EditAtendimento", {editedId: editedId})
   }
 
   useEffect(() => {
@@ -133,13 +138,13 @@ export const GerenciarAtendimento = () => {
           {atendimentos.length > 0 ? (
             atendimentos.map((atendimento) => {
               return (
-                <CardGerenciamento
+                <CardGerenciamento2
                   id={atendimento.id}
                   imagem={atendimento.imagem}
                   nome={atendimento.nome}
                   key={atendimento.id}
                   deleteFunc={deleteAtendimento}
-                  editFunc={async (a: number) => {}}
+                  editFunc={() => editAtendimento(atendimento.id)}
                 >
                   <Text
                     style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
@@ -151,7 +156,7 @@ export const GerenciarAtendimento = () => {
                   >
                     {atendimento.responsavel}
                   </Text>
-                </CardGerenciamento>
+                </CardGerenciamento2>
               );
             })
           ) : (
