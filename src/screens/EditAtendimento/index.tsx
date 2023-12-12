@@ -12,7 +12,7 @@ import { api } from "../../api/api";
 import { styles } from "./styles";
 import { ButtonIcon } from "../../components/ButtonIcon";
 import { defaultTheme } from "../../global/styles/themes";
-import { ParamListBase, useNavigation } from "@react-navigation/native";
+import { ParamListBase, useNavigation, useRoute } from "@react-navigation/native";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -26,7 +26,16 @@ interface Entity {
   id: number
 }
 
-export const CadastrarAtendimento = () => {
+interface Atendimento {
+  id: number
+  tipoAtendimento: string
+  descricao: string
+  date: string
+  responsavel: string
+  complete: number
+}
+
+export const EditAtendimento = () => {
   const { user } = useContext(AuthContext);
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
@@ -41,6 +50,7 @@ export const CadastrarAtendimento = () => {
   const [pets, setPets] = useState<Entity[]>(
     [] as Entity[]
   );
+  const [atendimento, setAtendimento] = useState<Atendimento>();
   const [loadingResponsaveis, setLoadingResponsaveis] = useState(true);
   const [loadingPets, setLoadingPets] = useState(true);
   const [descricao, setDescricao] = useState<string>("");
@@ -49,8 +59,9 @@ export const CadastrarAtendimento = () => {
   const [hasDate, setHasDate] = useState<boolean>(false);
   const [screenDate, setScreenDate] = useState<string>("");
 
-  const [image, setImage] = useState<string>();
+  const route = useRoute();
 
+  const [image, setImage] = useState<string>();
   
   const getPets = async () => {
     api.defaults.headers.common.Authorization = user.token;
@@ -65,6 +76,17 @@ export const CadastrarAtendimento = () => {
     setResponsaveis(res.data.responsaveis);
     setLoadingResponsaveis(false)
   };
+
+  const getAtendimento = async () => {
+    api.defaults.headers.common.Authorization = user.token;
+    if (route.params && "id" in route.params) {
+      const res = await api.post("/responsavel", { id: route.params.id});
+      setAtendimento(res.data.atendimento)
+      setTipoAtendimento(atendimento!.tipoAtendimento)
+      setDescricao(atendimento!.descricao)
+    }
+    setLoadingResponsaveis(false)
+  };
   
   const [userHasImage, setUserHasImage] = useState<boolean>(false);
 
@@ -72,7 +94,7 @@ export const CadastrarAtendimento = () => {
     setDate(newDate)
     setOpen(false)
     updateScreenDate(newDate!)
-    setHasDate(true)
+    setHasDate(true)    
   }
 
   const openCalendar = (modeToShow: string) => {
@@ -89,13 +111,14 @@ export const CadastrarAtendimento = () => {
   useEffect(() => {
     getPets()
     getResponsaveis()
+    getAtendimento()
   }, [])
 
   if (loadingPets || loadingResponsaveis) {
     return (<Starting />)
   }
 
-  const sendForm = async () => {
+  const sendForm = async () => {    
     if (responsavel == 0) {
       Alert.alert("Escolha um responsavel")
       return
@@ -112,11 +135,12 @@ export const CadastrarAtendimento = () => {
     try {
         api.defaults.headers.common.Authorization = user.token;
         
-        await api.post("/atendimento/create", {tipoAtendimento: tipoAtendimento, responsavel: responsavel, pet: pet, descricao: descricao, date: date});
+        if (route.params && "editedId" in route.params) {
+          await api.patch("/atendimento/edit", { id: route.params.editedId, tipoAtendimento: tipoAtendimento, responsavel: responsavel, pet: pet, descricao: descricao, date: date});
+        }
         navigation.navigate("GerenciarAtendimento")
     } catch (e: any) {
         Alert.alert(e.response.data.error)
-        
     }
   }
 
