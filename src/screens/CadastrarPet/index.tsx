@@ -17,17 +17,25 @@ import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import * as ImagePicker from "expo-image-picker"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import MapView, { MapPressEvent, Marker } from "react-native-maps";
+import * as ExpoLocation from "expo-location";
 
-export const CadastrarResponsavel = () => {
+type EnderecoCoord = {
+  latitude:number;
+  longitude:number;
+}
+
+export const CadastrarPet = () => {
   const { user } = useContext(AuthContext);
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   const [nome, setNome] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [funcao, setFuncao] = useState<string>("");
+  const [tutor, setTutor] = useState<string>("");
   const [telefone, setTelefone] = useState<string>("");
-  const [senha, setSenha] = useState<string>("");
-  const [confirmarNovaSenha, setConfirmarNovaSenha] = useState<string>("");
+  const [locationAccess, setLocationAccess] = useState(false);
+  const [markerLocation, setMarkerLocation] = useState<EnderecoCoord>();
+
+  const [enderecoAtual, setEnderecoAtual] = useState<EnderecoCoord | null>(null);
 
   const [image, setImage] = useState<string>();
 
@@ -36,6 +44,19 @@ export const CadastrarResponsavel = () => {
   const [newImage, setNewImage] = useState<string>("");
 
   const sendForm = async () => {
+    if (nome.length <= 0) {
+      Alert.alert("Digite o nome do pet")
+      return
+    } else if (tutor.length <= 0) {
+      Alert.alert("Digite o nome do tutor")
+      return
+    } else if (telefone.length <= 0) {
+      Alert.alert("Escolha uma data")
+      return
+    } else if (!markerLocation) {
+      Alert.alert("Digite uma descrição")
+      return
+    }
     try {
         const form = new FormData();
         
@@ -43,10 +64,9 @@ export const CadastrarResponsavel = () => {
             headers: { "content-type": "multipart/form-data" },
         };
         form.append("nome", nome)
-        form.append("funcao", funcao)
+        form.append("tutor", tutor)
         form.append("telefone", telefone)
-        form.append("email", email)
-        form.append("senha", senha)
+        form.append("endereco", `${markerLocation.latitude}|${markerLocation.longitude}`)
         form.append("image", {
           name: newImage.split("/").pop()?.split("_").pop(),
           uri: newImage,
@@ -54,8 +74,8 @@ export const CadastrarResponsavel = () => {
         } as any);
         api.defaults.headers.common.Authorization = user.token;
         
-        const newUser = await api.post("/responsavel/create", form, config);
-        navigation.navigate("GerenciarResponsaveis")
+        await api.post("/pet/create", form, config);
+        navigation.navigate("GerenciarPets")
     } catch (e: any) {
         Alert.alert(e.response.data.error)
         
@@ -71,7 +91,6 @@ export const CadastrarResponsavel = () => {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
       });
 
-      
       if (result.assets) {
         saveImage(result.assets[0].uri);        
       }
@@ -84,6 +103,21 @@ export const CadastrarResponsavel = () => {
     setUserHasImage(true);
   };
 
+  async function getEnderecoAtual(){
+    let { status } = await ExpoLocation.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert("O aplicativo precisa da sua localização.");
+          return;
+      }
+      setLocationAccess(true)
+      let location = await ExpoLocation.getCurrentPositionAsync();
+      setEnderecoAtual(location.coords);
+  }
+
+  useEffect(() => {
+    getEnderecoAtual()    
+  }, [locationAccess])
+
   return (
     <>
       <KeyboardAvoidingView behavior="height">
@@ -93,7 +127,7 @@ export const CadastrarResponsavel = () => {
             iconColor={defaultTheme.COLORS.black}
             iconName="arrow-left"
             onPress={() => {              
-              navigation.navigate("GerenciarResponsaveis")
+              navigation.navigate("GerenciarPets")
             }}
             size={50}
           />
@@ -105,7 +139,7 @@ export const CadastrarResponsavel = () => {
               source={
                 userHasImage
                   ? { uri: image }
-                  : require("../../images/abstract-user-icon-3.png")
+                  : require("../../images/kisspng-cat-computer-icons-user-profile-5ae8658e7a9b63.4256720315251797905022.png")
               }
             />
             <View style={styles.iconCam}>
@@ -121,11 +155,29 @@ export const CadastrarResponsavel = () => {
 
         <ScrollView contentContainerStyle={styles.formPerfil}>
             <Input label="Nome" value={nome} onChangeText={(text) => setNome(text)} placeholder="Nome" size={16}/>
-            <Input label="Email" value={email} onChangeText={(text) => setEmail(text)} placeholder="Email" size={16}/>
-            <Input label="Funcao" value={funcao} onChangeText={(text) => setFuncao(text)} placeholder="Funcao" size={16}/>
+            <Input label="Tutor" value={tutor} onChangeText={(text) => setTutor(text)} placeholder="Tutor" size={16}/>
             <Input label="Telefone" value={telefone} onChangeText={(text) => setTelefone(text)} placeholder="Telefone" size={16}/>
-            <Input label="Senha" value={senha} onChangeText={(text) => setSenha(text)} placeholder="Senha" isPassword={true} size={16}/>
-            <Input label="Confirmar senha" value={confirmarNovaSenha} onChangeText={(text) => setConfirmarNovaSenha(text)} placeholder="Confirmar senha" isPassword={true} size={16}/>
+            <View style={styles.mapContainer}>
+              {enderecoAtual ? 
+                <MapView style={styles.mapContainer} initialRegion={{
+                  latitude: enderecoAtual.latitude,
+                  longitude: enderecoAtual.longitude,
+                  latitudeDelta: 10,
+                  longitudeDelta: 10,
+                  }} 
+                  showsUserLocation
+                  showsMyLocationButton
+                  onPress={(mapLocation: MapPressEvent) => {
+                    const marker: EnderecoCoord = {
+                      latitude: mapLocation.nativeEvent.coordinate.latitude, 
+                      longitude: mapLocation.nativeEvent.coordinate.longitude
+                    }
+                    setMarkerLocation(marker)
+                  }}>
+                    {markerLocation && <Marker coordinate={{latitude: markerLocation.latitude, longitude: markerLocation.longitude}}/>}
+                  </MapView>
+              : <></>}
+            </View>
             <Button color={defaultTheme.COLORS.blueMain} fontSize={16} height={0.06} width={0.3} onPress={async () => await sendForm()} text="Salvar" textColor={defaultTheme.COLORS.white}/>
         </ScrollView>
         </KeyboardAvoidingView>

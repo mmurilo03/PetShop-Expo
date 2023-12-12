@@ -153,7 +153,7 @@ export const EditAtendimento = () => {
             iconColor={defaultTheme.COLORS.black}
             iconName="arrow-left"
             onPress={() => {              
-              navigation.navigate("GerenciarAtendimento", {update: true})
+              navigation.navigate("GerenciarAtendimento")
             }}
             size={50}
           />

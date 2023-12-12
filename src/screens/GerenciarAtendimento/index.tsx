@@ -48,7 +48,7 @@ export const GerenciarAtendimento = () => {
   const deleteAtendimento = async (deleteId: number) => {
     try {
       api.defaults.headers.common.Authorization = user.token;
-      await api.delete(`/atendimento/delete/${deleteId}`, {data: { id: user.id }});
+      await api.delete(`/atendimento/delete/${deleteId}`);
       getAtendimentos();
     } catch (e: any) {
         Alert.alert(e.response.data.error)
