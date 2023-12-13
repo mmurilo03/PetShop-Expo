@@ -12,7 +12,11 @@ import { api } from "../../api/api";
 import { styles } from "./styles";
 import { ButtonIcon } from "../../components/ButtonIcon";
 import { defaultTheme } from "../../global/styles/themes";
-import { ParamListBase, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  ParamListBase,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import * as ImagePicker from "expo-image-picker";
@@ -28,12 +32,12 @@ type EnderecoCoord = {
 };
 
 interface Pet {
-  id: number
-  nome: string
-  tutor: string
-  telefone: string
-  endereco: string
-  imagem: string
+  id: number;
+  nome: string;
+  tutor: string;
+  telefone: string;
+  endereco: string;
+  imagem: string;
 }
 
 export const EditPet = () => {
@@ -76,7 +80,7 @@ export const EditPet = () => {
       Alert.alert("Escolha o endereço no mapa");
       return;
     } else if (!(route.params && "editedId" in route.params)) {
-      return
+      return;
     }
     try {
       const form = new FormData();
@@ -84,7 +88,7 @@ export const EditPet = () => {
       const config = {
         headers: { "content-type": "multipart/form-data" },
       };
-      form.append("id", `${route.params.editedId}`)
+      form.append("id", `${route.params.editedId}`);
       form.append("nome", nome);
       form.append("tutor", tutor);
       form.append("telefone", telefone);
@@ -96,12 +100,12 @@ export const EditPet = () => {
         name: newImage.split("/").pop()?.split("_").pop(),
         uri: newImage,
         type: "image/png",
-      } as any);      
+      } as any);
       api.defaults.headers.common.Authorization = user.token;
-      
+
       await api.patch("/pet/edit", form, config);
       navigation.navigate("GerenciarPets");
-    } catch (e: any) {      
+    } catch (e: any) {
       Alert.alert(e.response.data.error);
     }
   };
@@ -138,16 +142,16 @@ export const EditPet = () => {
     setEnderecoAtual(location.coords);
   }
 
-  const loadPet = async() => {
+  const loadPet = async () => {
     if (!(route.params && "editedId" in route.params)) {
-      return
+      return;
     }
     api.defaults.headers.common.Authorization = user.token;
-    
+
     const res = await api.get(`/pet/${route.params.editedId}`);
-    setEditedPet(res.data.pet);    
+    setEditedPet(res.data.pet);
     setLoadingPet(false);
-  }
+  };
 
   const loadImage = async () => {
     if (editedPet) {
@@ -158,25 +162,28 @@ export const EditPet = () => {
         setUserHasImage(false);
       }
     }
-  }
+  };
 
   useEffect(() => {
-    loadImage()
+    loadImage();
     getEnderecoAtual();
     loadPet();
     if (editedPet) {
-      setNome(editedPet.nome)
-      setTutor(editedPet.tutor)
-      setTelefone(editedPet.telefone)
-      const image = api.getUri({ url: `images/${editedPet.imagem}`})
+      setNome(editedPet.nome);
+      setTutor(editedPet.tutor);
+      setTelefone(editedPet.telefone);
+      const image = api.getUri({ url: `images/${editedPet.imagem}` });
       setImage(image);
       setNewImage(image);
-      setMarkerLocation({latitude: parseFloat(editedPet.endereco.split("|")[0]), longitude:parseFloat(editedPet.endereco.split("|")[1])})
+      setMarkerLocation({
+        latitude: parseFloat(editedPet.endereco.split("|")[0]),
+        longitude: parseFloat(editedPet.endereco.split("|")[1]),
+      });
     }
   }, [locationAccess, loadingPet, userHasImage]);
 
   if (loadingPet) {
-    return (<Starting />)
+    return <Starting />;
   }
 
   return (
@@ -201,7 +208,9 @@ export const EditPet = () => {
             width={0.3}
             iconColor={defaultTheme.COLORS.white}
             iconName="clipboard-list"
-            onPress={() => {setShowForm(true)}}
+            onPress={() => {
+              setShowForm(true);
+            }}
             size={16}
             text="Formulário"
             textColor={defaultTheme.COLORS.white}
@@ -213,92 +222,97 @@ export const EditPet = () => {
             width={0.3}
             iconColor={defaultTheme.COLORS.white}
             iconName="map-marked-alt"
-            onPress={() => {setShowForm(false)}}
+            onPress={() => {
+              setShowForm(false);
+            }}
             size={16}
             text="Endereco"
             textColor={defaultTheme.COLORS.white}
           />
         </View>
-        
+
         <ScrollView contentContainerStyle={styles.formPerfil}>
-          {showForm ? 
-          <>
-          <View style={styles.imageContainer}>
-          <View>
-            <Image
-              style={styles.image}
-              source={
-                userHasImage
-                  ? { uri: image }
-                  : require("../../images/kisspng-cat-computer-icons-user-profile-5ae8658e7a9b63.4256720315251797905022.png")
-              }
-            />
-            <View style={styles.iconCam}>
-              <ButtonIcon
-                iconColor={defaultTheme.COLORS.black}
-                iconName="camera"
-                onPress={onButtonPress}
-                size={30}
+          {showForm ? (
+            <>
+              <View style={styles.imageContainer}>
+                <View>
+                  <Image
+                    style={styles.image}
+                    source={
+                      userHasImage
+                        ? { uri: image }
+                        : require("../../images/kisspng-cat-computer-icons-user-profile-5ae8658e7a9b63.4256720315251797905022.png")
+                    }
+                  />
+                  <View style={styles.iconCam}>
+                    <ButtonIcon
+                      iconColor={defaultTheme.COLORS.black}
+                      iconName="camera"
+                      onPress={onButtonPress}
+                      size={30}
+                    />
+                  </View>
+                </View>
+              </View>
+              <Input
+                label="Nome"
+                value={nome}
+                onChangeText={(text) => setNome(text)}
+                placeholder="Nome"
+                size={16}
               />
-            </View>
-          </View>
-        </View>
-          <Input
-            label="Nome"
-            value={nome}
-            onChangeText={(text) => setNome(text)}
-            placeholder="Nome"
-            size={16}
-          />
-          <Input
-            label="Tutor"
-            value={tutor}
-            onChangeText={(text) => setTutor(text)}
-            placeholder="Tutor"
-            size={16}
-          />
-          <Input
-            label="Telefone"
-            value={telefone}
-            onChangeText={(text) => setTelefone(text)}
-            placeholder="Telefone"
-            size={16}
-          /></>
-        : 
-        <View style={styles.mapContainer}>
-          {enderecoAtual ? (
-            <MapView
-              style={styles.mapContainer}
-              initialRegion={{
-                latitude: enderecoAtual.latitude,
-                longitude: enderecoAtual.longitude,
-                latitudeDelta: 10,
-                longitudeDelta: 10,
-              }}
-              showsUserLocation
-              showsMyLocationButton
-              onPress={(mapLocation: MapPressEvent) => {
-                const marker: EnderecoCoord = {
-                  latitude: mapLocation.nativeEvent.coordinate.latitude,
-                  longitude: mapLocation.nativeEvent.coordinate.longitude,
-                };
-                setMarkerLocation(marker);
-              }}
-            >
-              {markerLocation && (
-                <Marker
-                  coordinate={{
-                    latitude: markerLocation.latitude,
-                    longitude: markerLocation.longitude,
-                  }}
-                />
-              )}
-            </MapView>
+              <Input
+                label="Tutor"
+                value={tutor}
+                onChangeText={(text) => setTutor(text)}
+                placeholder="Tutor"
+                size={16}
+              />
+              <Input
+                label="Telefone"
+                value={telefone}
+                onChangeText={(text) => setTelefone(text)}
+                placeholder="Telefone"
+                size={16}
+              />
+            </>
           ) : (
-            <></>
+            <View style={styles.mapContainer}>
+              {enderecoAtual ? (
+                <MapView
+                  zoomControlEnabled
+                  style={styles.mapContainer}
+                  initialRegion={{
+                    latitude: enderecoAtual.latitude,
+                    longitude: enderecoAtual.longitude,
+                    latitudeDelta: 0.007,
+                    longitudeDelta: 0.007,
+                  }}
+                  showsUserLocation
+                  showsMyLocationButton
+                  onPress={(mapLocation: MapPressEvent) => {
+                    const marker: EnderecoCoord = {
+                      latitude: mapLocation.nativeEvent.coordinate.latitude,
+                      longitude: mapLocation.nativeEvent.coordinate.longitude,
+                    };
+                    setMarkerLocation(marker);
+                  }}
+                >
+                  {markerLocation && (
+                    <Marker
+                      coordinate={{
+                        latitude: markerLocation.latitude,
+                        longitude: markerLocation.longitude,
+                      }}
+                    />
+                  )}
+                </MapView>
+              ) : (
+                <></>
+              )}
+            </View>
           )}
-        </View>}
-          
+
           <Button
             color={defaultTheme.COLORS.blueMain}
             fontSize={16}
