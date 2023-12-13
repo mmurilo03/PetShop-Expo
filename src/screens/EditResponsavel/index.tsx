@@ -30,13 +30,32 @@ export const EditResponsavel = () => {
 
   const navigation = useNavigation();
 
-  const [image, setImage] = useState<string>();
+  const [image, setImage] = useState<string>("");
 
   const [userHasImage, setUserHasImage] = useState<boolean>(false);
 
   const [newImage, setNewImage] = useState<string>("");
 
   const sendForm = async () => {
+    if (nome.length <= 0) {
+      Alert.alert("Digite um nome")
+      return
+    } else if (email.length <= 0) {
+      Alert.alert("Digite um email")
+      return
+    } else if (funcao.length <= 0) {
+      Alert.alert("Digite uma função")
+      return
+    } else if (telefone.length <= 0) {
+      Alert.alert("Digite um telefone")
+      return
+    } else if (novaSenha != confirmarNovaSenha) {
+      Alert.alert("Senhas não coincidem")
+      return
+    } else if (image.length <= 0) {
+      Alert.alert("Escolha uma imagem")
+      return
+    }
     try {
         const form = new FormData();
         
@@ -73,7 +92,6 @@ export const EditResponsavel = () => {
         quality: 1,
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
       });
-
       
       if (result.assets) {
         saveImage(result.assets[0].uri);        

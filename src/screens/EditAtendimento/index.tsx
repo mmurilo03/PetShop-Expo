@@ -33,6 +33,8 @@ interface Atendimento {
   date: string
   responsavel: string
   complete: number
+  petId: number
+  responsavelId: number
 }
 
 export const EditAtendimento = () => {
@@ -60,9 +62,8 @@ export const EditAtendimento = () => {
   const [screenDate, setScreenDate] = useState<string>("");
 
   const route = useRoute();
+  const [loadingAtendimento, setLoadingAtendimento] = useState(true);
 
-  const [image, setImage] = useState<string>();
-  
   const getPets = async () => {
     api.defaults.headers.common.Authorization = user.token;
     const res = await api.get("/pet");
@@ -79,17 +80,26 @@ export const EditAtendimento = () => {
 
   const getAtendimento = async () => {
     api.defaults.headers.common.Authorization = user.token;
-    if (route.params && "id" in route.params) {
-      const res = await api.post("/responsavel", { id: route.params.id});
+    if (route.params && "editedId" in route.params) {
+      const res = await api.get(`/atendimento/${route.params.editedId}`);
       setAtendimento(res.data.atendimento)
-      setTipoAtendimento(atendimento!.tipoAtendimento)
-      setDescricao(atendimento!.descricao)
+      if (atendimento) {
+        setTipoAtendimento(atendimento.tipoAtendimento)
+        setDescricao(atendimento.descricao)
+        setResponsavel(atendimento.responsavelId)
+        setPet(atendimento.petId)
+        const sc = new Date(atendimento.date)
+        sc.setMinutes(sc.getMinutes() - sc.getTimezoneOffset())
+        setDate(sc);
+        const date = sc.toISOString().slice(0, 16).replace("T", "-")
+        const dateTemp = date.split("-")
+        setScreenDate(`${dateTemp[3]} | ${dateTemp[2]}/${dateTemp[1]}/${dateTemp[0]}`)
+        setHasDate(true)
+      }
     }
-    setLoadingResponsaveis(false)
+    setLoadingAtendimento(false)
   };
   
-  const [userHasImage, setUserHasImage] = useState<boolean>(false);
-
   const setNewDate = (e: DateTimePickerEvent, newDate: Date | undefined) => {
     setDate(newDate)
     setOpen(false)
@@ -112,9 +122,13 @@ export const EditAtendimento = () => {
     getPets()
     getResponsaveis()
     getAtendimento()
-  }, [])
+  }, [loadingPets, loadingAtendimento, loadingResponsaveis])
 
   if (loadingPets || loadingResponsaveis) {
+    return (<Starting />)
+  }
+
+  if (loadingAtendimento) {
     return (<Starting />)
   }
 

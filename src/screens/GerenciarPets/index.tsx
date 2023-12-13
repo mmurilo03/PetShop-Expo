@@ -51,6 +51,10 @@ export const GerenciarPets = () => {
     }
   }
 
+  const editPet = async (editedId: number) => {
+    navigation.navigate("EditPet", {editedId: editedId})
+  }
+
   useEffect(() => {
     navigation.addListener("focus", () => {
       getPets();
@@ -137,7 +141,7 @@ export const GerenciarPets = () => {
                 nome={pet.nome}
                 key={pet.id}
                 deleteFunc={deletePet}
-                editFunc={() => {}}
+                editFunc={() => {editPet(pet.id)}}
               >
                 <Text
                   style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
