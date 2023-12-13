@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
-import { Alert, Dimensions, Image } from "react-native";
+import { Alert, Dimensions, Image, LayoutChangeEvent, ViewProps } from "react-native";
 import { Text, View } from "react-native";
 import { api } from "../../api/api";
 import { styles } from "./styles";
@@ -24,10 +24,9 @@ export const CardGerenciamento2 = ({
   deleteFunc,
   editFunc,
 }: Entity) => {
-  const { user } = useContext(AuthContext);
   const [image, setImage] = useState<string>();
   const [entityHasImage, setEntityHasImage] = useState<boolean>(false);
-
+  const [buttonHeight, setButtonHeight] = useState<number>(0);
   const getImage = async () => {
     try {
       await api.get(`images/${imagem}`);
@@ -44,7 +43,6 @@ export const CardGerenciamento2 = ({
       } catch (error) {}
     }
   };
-
 
   const deleteAlert = () => {
     Alert.alert("Deletar responsável?", `Deletar: ${nome}?`, [
@@ -75,56 +73,43 @@ export const CardGerenciamento2 = ({
           }
         />
       </View>
-      <View
-        style={[
-          styles.entityName,
-          user.id != 1
-            ? {
-                width: "81%",
-                borderTopRightRadius: 5,
-                borderBottomRightRadius: 5,
-              }
-            : {},
-        ]}
-      >
+      <View style={styles.entityName}>
         <View style={styles.entityTitle}>
           <Text style={styles.cardText}>{nome}</Text>
         </View>
         <View style={styles.entityContent}>{children}</View>
       </View>
-      {user.id == 1 ? (
-        <>
-          <View>
-            <ButtonIcon
-              iconColor={defaultTheme.COLORS.white}
-              iconName="pencil-alt"
-              onPress={() => {
-                editFunc();
-              }}
-              size={40}
-              height={Dimensions.get("screen").height * 0.1}
-              width={Dimensions.get("screen").height * 0.06}
-              background={defaultTheme.COLORS.graySecond}
-            />
-          </View>
-          <View style={styles.actionIcons}>
-            <ButtonIcon
-              iconColor={defaultTheme.COLORS.white}
-              iconName="trash"
-              onPress={() => {
-                deleteAlert();
-              }}
-              size={40}
-              height={Dimensions.get("screen").height * 0.1}
-              width={Dimensions.get("screen").height * 0.06}
-              background={defaultTheme.COLORS.red}
-              border={{ topRight: 5, bottomRight: 5 }}
-            />
-          </View>
-        </>
-      ) : (
-        <></>
-      )}
+
+      <View style={styles.actionIcons} onLayout={(event: LayoutChangeEvent) => {
+        const { height } = event.nativeEvent.layout;
+        setButtonHeight(height)
+      }}>
+        <ButtonIcon
+          iconColor={defaultTheme.COLORS.white}
+          iconName="pencil-alt"
+          onPress={() => {
+            editFunc();
+          }}
+          size={40}
+          height={buttonHeight}
+          width={Dimensions.get("screen").height * 0.06}
+          background={defaultTheme.COLORS.graySecond}
+        />
+      </View>
+      <View style={[styles.actionIcons, styles.deleteButton]}>
+        <ButtonIcon
+          iconColor={defaultTheme.COLORS.white}
+          iconName="trash"
+          onPress={() => {
+            deleteAlert();
+          }}
+          size={40}
+          height={buttonHeight}
+          width={Dimensions.get("screen").height * 0.06}
+          background={defaultTheme.COLORS.red}
+          border={{ topRight: 5, bottomRight: 5 }}
+        />
+      </View>
     </View>
   );
 };

@@ -30,7 +30,7 @@ export const EditResponsavel = () => {
 
   const navigation = useNavigation();
 
-  const [image, setImage] = useState<string>("");
+  const [image, setImage] = useState<string>("sem imagem");
 
   const [userHasImage, setUserHasImage] = useState<boolean>(false);
 
@@ -79,7 +79,7 @@ export const EditResponsavel = () => {
         const newUser = await api.patch("/responsavel/edit", form, config);
         updateUser(newUser.data.responsavelEdited)
     } catch (e: any) {
-        Alert.alert(e.response.data.error)
+        Alert.alert(e.response)
         
     }
   }
@@ -115,6 +115,7 @@ export const EditResponsavel = () => {
       try {
         const image = api.getUri({ url: `images/${user.img}` });
         setImage(image);
+        setNewImage(image);
         return image;
       } catch (error) {}
     }

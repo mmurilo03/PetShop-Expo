@@ -1,6 +1,7 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { getSavedUser, saveUser } from "../storage/storage";
 import { api } from "../api/api";
+import { Alert } from "react-native";
 
 export interface User {
     name: string,
@@ -35,6 +36,11 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
     const [loading, setLoading] = useState<boolean>(true as boolean);
 
     const login = async (email: string, senha: string) => {
+        if (email.length <= 0) {
+            Alert.alert("Digite um email")
+        } else if (senha.length <= 0) {
+            Alert.alert("Digite sua senha")
+        }
         try {
             const { data } = await api.post("/responsavel/login", {email, senha});
             if (data.token) {                
@@ -42,8 +48,8 @@ export const AuthComponent = ({children}: AuthComponentProps) => {
                 saveUser({ name: data.nome, token: data.token, img: data.img, email: data.email, funcao: data.funcao, id: data.id, telefone: data.telefone });
                 setValidToken(true);
             }
-        } catch (error) {
-            throw error;
+        } catch (e: any) {
+            Alert.alert(e.response.data.error);
         }
     }
 

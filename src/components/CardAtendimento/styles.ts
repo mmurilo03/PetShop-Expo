@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
 
     container: {
         width: Dimensions.get("screen").width * 0.8,
-        height: Dimensions.get("screen").height * 0.4,
+        minHeight: Dimensions.get("screen").height * 0.4,
         gap: 9
     },
     
@@ -34,7 +34,9 @@ export const styles = StyleSheet.create({
     
     atendimentoType: {
         flexDirection: "row",
-        gap: 10
+        gap: 10,
+        flexWrap: "wrap",
+        marginBottom: 10
     },
 
     atendimentoTypeText: {

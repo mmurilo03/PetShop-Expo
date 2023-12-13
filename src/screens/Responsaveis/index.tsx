@@ -16,6 +16,7 @@ import { defaultTheme } from "../../global/styles/themes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CardEnditade } from "../../components/CardEntidade";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { TextBold } from "../../components/TextBold";
 
 interface Entity {
   nome: string;
@@ -145,9 +146,9 @@ export const Responsaveis = () => {
                 nome={item.nome}
                 key={item.id}
               >
-                <Text>Email: {item.email}</Text>
-                <Text>Função: {item.funcao}</Text>
-                <Text>Telefone: {item.telefone}</Text>
+                <Text><TextBold text="Email: "/>{item.email}</Text>
+                <Text><TextBold text="Função: "/>{item.funcao}</Text>
+                <Text><TextBold text="Telefone: "/>{item.telefone}</Text>
               </CardEnditade>
             );
           }}

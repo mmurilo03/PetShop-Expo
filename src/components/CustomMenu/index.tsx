@@ -45,7 +45,8 @@ export const CustomMenu = (props: DrawerContentComponentProps) => {
         <DrawerContentScrollView style={styles.content} {...props}>
             <View style={styles.imageContainer}>
                 <Image style={styles.image} source={userHasImage ? {uri: image} : require("../../images/abstract-user-icon-3.png")} />
-                <Text style={styles.username}>{user.name}</Text>
+                <Text style={styles.username}>{user.name && user.name.length > 40 ? user.name.substring(0, 39)+"..." : user.name}</Text>
+                {/* <Text style={styles.username}>{user.name}</Text> */}
             </View>
             <DrawerItemList {...props} />
             <View style={styles.buttonContainer}>

@@ -17,7 +17,7 @@ export function NavigationDrawer(){
     screenOptions={({
       drawerStyle: {
         marginTop: Dimensions.get('screen').height*0.13,
-        height:Dimensions.get('screen').height*0.55,
+        height:Dimensions.get('screen').height*0.60,
         borderRadius: 5
       },
       headerTitle: "",
