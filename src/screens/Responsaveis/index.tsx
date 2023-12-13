@@ -1,6 +1,10 @@
-import { FlatList, ScrollView, Text, View } from "react-native"
-import { styles } from "./styles"
-import { DrawerActionHelpers, ParamListBase, useNavigation } from "@react-navigation/native";
+import { FlatList, ScrollView, Text, View } from "react-native";
+import { styles } from "./styles";
+import {
+  DrawerActionHelpers,
+  ParamListBase,
+  useNavigation,
+} from "@react-navigation/native";
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { CustomHeader } from "../../components/CustomHeader";
@@ -14,101 +18,141 @@ import { CardEnditade } from "../../components/CardEntidade";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Entity {
-    nome: string,
-    imagem: string,
-    email: string,
-    funcao: string,
-    id: number,
-    children: ReactNode
+  nome: string;
+  imagem: string;
+  email: string;
+  funcao: string;
+  id: number;
+  telefone: string;
+  children: ReactNode;
 }
 
 export const Responsaveis = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const drawer = useNavigation<DrawerActionHelpers<ParamListBase>>();
 
-    const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-    const drawer = useNavigation<DrawerActionHelpers<ParamListBase>>();
+  const { user, validToken, logout } = useContext(AuthContext);
 
-    const { user, validToken, logout } = useContext(AuthContext);
+  const [responsaveis, setResponsaveis] = useState<Entity[]>([] as Entity[]);
+  const [responsaveisFiltrados, setResponsaveisFiltrados] = useState<Entity[]>(
+    [] as Entity[]
+  );
+  const [searchText, setSearchText] = useState<string>("");
+  const getResponsaveis = async () => {
+    api.defaults.headers.common.Authorization = user.token;
+    const res = await api.get("/responsavel");
+    setResponsaveis(res.data.responsaveis);
+  };
 
-    const [responsaveis, setResponsaveis] = useState<Entity[]>([] as Entity[]);
+  const navigateLogout = () => {
+    logout();
+    navigation.navigate("Login");
+  };
 
-    const getResponsaveis = async () => {
-        api.defaults.headers.common.Authorization = user.token;
-        const res = await api.get("/responsavel");
-        setResponsaveis(res.data.responsaveis);
+  const filtrar = () => {
+    const filtrados: Entity[] = [];
+    responsaveis.forEach((responsavel) => {
+      if (
+        responsavel.nome.toLowerCase().includes(searchText.toLowerCase()) ||
+        responsavel.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        responsavel.funcao.toLowerCase().includes(searchText.toLowerCase()) ||
+        responsavel.telefone.toLowerCase().includes(searchText.toLowerCase())
+      ) {
+        filtrados.push(responsavel);
+      }
+    });
+    setResponsaveisFiltrados(filtrados);
+  };
+  useEffect(() => {
+    if (!validToken) {
+      navigateLogout();
     }
+  });
 
-    const navigateLogout = () => {
-        logout();
-        navigation.navigate("Login");
-    } 
-
-    useEffect(() => {
-        if (!validToken) {
-            navigateLogout()
-        }
-    })
-
-    useEffect(() => {
-        getResponsaveis();        
-    }, [])
-
-    return (
-        <SafeAreaView style={{flex:1, paddingBottom: 20}}>
-        <CustomHeader toggleDrawer={drawer.toggleDrawer} search={() => {}}/>
-        <View style={styles.container}>
-            <View style={styles.pageTitle}>
-                <Icon name='home' color={"black"} size={30} />
-                <Text style={styles.pageTitleText}>Página inicial</Text>
-            </View>
-            <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalButtons} horizontal={true}>
-                <ButtonTextIcon 
-                color={defaultTheme.COLORS.gray}
-                fontSize={16}
-                height={0.04}
-                width={0.35}
-                iconColor={defaultTheme.COLORS.black}
-                iconName="list-ul"
-                onPress={() => {navigation.navigate("Home")}}
-                size={16}
-                text="Atendimentos"
-                textColor={defaultTheme.COLORS.black}
-                />
-                <ButtonTextIcon 
-                color={defaultTheme.COLORS.blueMain}
-                fontSize={16}
-                height={0.04}
-                width={0.35}
-                iconColor={defaultTheme.COLORS.white}
-                iconName="briefcase-medical"
-                onPress={() => {}}
-                size={16}
-                text="Responsaveis"
-                textColor={defaultTheme.COLORS.white}
-                />
-                <ButtonTextIcon 
-                color={defaultTheme.COLORS.gray}
-                fontSize={16}
-                height={0.04}
-                width={0.35}
-                iconColor={defaultTheme.COLORS.black}
-                iconName="paw"
-                onPress={() => {navigation.navigate("Pets")}}
-                size={16}
-                text="Pets"
-                textColor={defaultTheme.COLORS.black}
-                />
-            </ScrollView>
-            <FlatList contentContainerStyle={styles.scrollStyle} data={responsaveis}
-            renderItem={({item}) => {
-                return (<CardEnditade id={item.id}
-                    imagem={item.imagem}
-                    nome={item.nome}
-                    key={item.id}>
-                        <Text>Email: {item.email}</Text>
-                        <Text>Função: {item.funcao}</Text>
-                    </CardEnditade>)
-            }}/>
+  useEffect(() => {
+    getResponsaveis();
+  }, []);
+  useEffect(() => {
+    filtrar();
+  }, [searchText]);
+  return (
+    <SafeAreaView style={{ flex: 1, paddingBottom: 20 }}>
+      <CustomHeader
+        toggleDrawer={drawer.toggleDrawer}
+        onChangeText={(text) => {
+          setSearchText(text);
+        }}
+      />
+      <View style={styles.container}>
+        <View style={styles.pageTitle}>
+          <Icon name="home" color={"black"} size={30} />
+          <Text style={styles.pageTitleText}>Página inicial</Text>
         </View>
-        </SafeAreaView>
-    )
-}
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.horizontalButtons}
+          horizontal={true}
+        >
+          <ButtonTextIcon
+            color={defaultTheme.COLORS.gray}
+            fontSize={16}
+            height={0.04}
+            width={0.35}
+            iconColor={defaultTheme.COLORS.black}
+            iconName="list-ul"
+            onPress={() => {
+              navigation.navigate("Home");
+            }}
+            size={16}
+            text="Atendimentos"
+            textColor={defaultTheme.COLORS.black}
+          />
+          <ButtonTextIcon
+            color={defaultTheme.COLORS.blueMain}
+            fontSize={16}
+            height={0.04}
+            width={0.35}
+            iconColor={defaultTheme.COLORS.white}
+            iconName="briefcase-medical"
+            onPress={() => {}}
+            size={16}
+            text="Responsaveis"
+            textColor={defaultTheme.COLORS.white}
+          />
+          <ButtonTextIcon
+            color={defaultTheme.COLORS.gray}
+            fontSize={16}
+            height={0.04}
+            width={0.35}
+            iconColor={defaultTheme.COLORS.black}
+            iconName="paw"
+            onPress={() => {
+              navigation.navigate("Pets");
+            }}
+            size={16}
+            text="Pets"
+            textColor={defaultTheme.COLORS.black}
+          />
+        </ScrollView>
+        <FlatList
+          contentContainerStyle={styles.scrollStyle}
+          data={responsaveisFiltrados.length > 0 ? responsaveisFiltrados : responsaveis}
+          renderItem={({ item }) => {
+            return (
+              <CardEnditade
+                id={item.id}
+                imagem={item.imagem}
+                nome={item.nome}
+                key={item.id}
+              >
+                <Text>Email: {item.email}</Text>
+                <Text>Função: {item.funcao}</Text>
+                <Text>Telefone: {item.telefone}</Text>
+              </CardEnditade>
+            );
+          }}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};

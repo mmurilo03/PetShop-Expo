@@ -18,12 +18,13 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Entity {
-  nome: string,
-  imagem: string,
-  email: string,
-  funcao: string,
-  id: number,
-  children: ReactNode
+  nome: string;
+  imagem: string;
+  email: string;
+  funcao: string;
+  id: number;
+  telefone: string;
+  children: ReactNode;
 }
 
 export const GerenciarResponsaveis = () => {
@@ -31,32 +32,38 @@ export const GerenciarResponsaveis = () => {
 
   const drawer = useNavigation<DrawerActionHelpers<ParamListBase>>();
 
-  const [responsaveis, setResponsaveis] = useState<Entity[]>(
+  const [responsaveis, setResponsaveis] = useState<Entity[]>([] as Entity[]);
+
+  const [responsaveisFiltrados, setResponsaveisFiltrados] = useState<Entity[]>(
     [] as Entity[]
   );
 
   const { user } = useContext(AuthContext);
-
+  const [searchText, setSearchText] = useState<string>("");
   const deleteResponsavel = async (deleteId: number) => {
     try {
       api.defaults.headers.common.Authorization = user.token;
-      await api.delete(`/responsavel/delete/${deleteId}`, {data: { id: user.id }});
+      await api.delete(`/responsavel/delete/${deleteId}`, {
+        data: { id: user.id },
+      });
       getResponsaveis();
     } catch (e: any) {
-        Alert.alert(e.response.data.error)
+      Alert.alert(e.response.data.error);
     }
-  }
+  };
 
   const editResponsavel = async (editedId: number, funcao: string) => {
     try {
       api.defaults.headers.common.Authorization = user.token;
-      
-      await api.patch(`/responsavel/editSimple/${editedId}`, { funcao: funcao });
+
+      await api.patch(`/responsavel/editSimple/${editedId}`, {
+        funcao: funcao,
+      });
       getResponsaveis();
     } catch (e: any) {
-        Alert.alert(e.response.data.error)
+      Alert.alert(e.response.data.error);
     }
-  }
+  };
 
   const getResponsaveis = async () => {
     api.defaults.headers.common.Authorization = user.token;
@@ -64,15 +71,38 @@ export const GerenciarResponsaveis = () => {
     setResponsaveis(res.data.responsaveis);
   };
 
+  const filtrar = () => {
+    const filtrados: Entity[] = [];
+    responsaveis.forEach((responsavel) => {
+      if (
+        responsavel.nome.toLowerCase().includes(searchText.toLowerCase()) ||
+        responsavel.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        responsavel.funcao.toLowerCase().includes(searchText.toLowerCase()) ||
+        responsavel.telefone.toLowerCase().includes(searchText.toLowerCase())
+      ) {
+        filtrados.push(responsavel);
+      }
+    });
+    setResponsaveisFiltrados(filtrados);
+  };
+
   useEffect(() => {
     navigation.addListener("focus", () => {
       getResponsaveis();
-    })
+    });
   }, [navigation]);
+  useEffect(() => {
+    filtrar();
+  }, [searchText]);
 
   return (
-    <SafeAreaView style={{flex:1, paddingBottom: 20}}>
-      <CustomHeader toggleDrawer={drawer.toggleDrawer} search={() => {}} />
+    <SafeAreaView style={{ flex: 1, paddingBottom: 20 }}>
+      <CustomHeader
+        toggleDrawer={drawer.toggleDrawer}
+        onChangeText={(text) => {
+          setSearchText(text);
+        }}
+      />
       <View style={styles.container}>
         <View style={styles.pageTitle}>
           <Ionicons
@@ -95,7 +125,9 @@ export const GerenciarResponsaveis = () => {
             width={0.35}
             iconColor={defaultTheme.COLORS.black}
             iconName="list-ul"
-            onPress={() => {navigation.navigate("GerenciarAtendimento")}}
+            onPress={() => {
+              navigation.navigate("GerenciarAtendimento");
+            }}
             size={16}
             text="Atendimentos"
             textColor={defaultTheme.COLORS.black}
@@ -119,7 +151,9 @@ export const GerenciarResponsaveis = () => {
             width={0.35}
             iconColor={defaultTheme.COLORS.black}
             iconName="paw"
-            onPress={() => {navigation.navigate("GerenciarPets")}}
+            onPress={() => {
+              navigation.navigate("GerenciarPets");
+            }}
             size={16}
             text="Pets"
             textColor={defaultTheme.COLORS.black}
@@ -134,31 +168,39 @@ export const GerenciarResponsaveis = () => {
             iconColor={defaultTheme.COLORS.white}
             iconName="plus"
             onPress={() => {
-              navigation.navigate("CadastrarResponsavel")
+              navigation.navigate("CadastrarResponsavel");
             }}
             size={16}
             text="Cadastrar"
             textColor={defaultTheme.COLORS.white}
           />
         </View>
-        <FlatList contentContainerStyle={styles.scrollStyle} data={responsaveis}
-        renderItem={({item}) => {
-          return (
-            <CardGerenciamento
-              id={item.id}
-              imagem={item.imagem}
-              nome={item.nome}
-              key={item.id}
-              deleteFunc={deleteResponsavel}
-              editFunc={editResponsavel}
-            >
-              <Text
-                style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
+        <FlatList
+          contentContainerStyle={styles.scrollStyle}
+          data={
+            responsaveisFiltrados.length > 0
+              ? responsaveisFiltrados
+              : responsaveis
+          }
+          renderItem={({ item }) => {
+            return (
+              <CardGerenciamento
+                id={item.id}
+                imagem={item.imagem}
+                nome={item.nome}
+                key={item.id}
+                deleteFunc={deleteResponsavel}
+                editFunc={editResponsavel}
               >
-                {item.funcao}
-              </Text>
-            </CardGerenciamento>)
-        }}/>
+                <Text
+                  style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
+                >
+                  {item.funcao}
+                </Text>
+              </CardGerenciamento>
+            );
+          }}
+        />
       </View>
     </SafeAreaView>
   );
