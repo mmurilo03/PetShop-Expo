@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native"
+import { FlatList, ScrollView, Text, View } from "react-native"
 import { styles } from "./styles"
 import { DrawerActionHelpers, ParamListBase, useNavigation } from "@react-navigation/native";
 import { useContext, useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Atendimento {
     id: number,
@@ -54,7 +55,7 @@ export const Home = () => {
     }, [])
 
     return (
-        <>
+        <SafeAreaView style={{flex:1, paddingBottom: 20}}>
         <CustomHeader toggleDrawer={drawer.toggleDrawer} search={() => {}}/>
         <View style={styles.container}>
             <View style={styles.pageTitle}>
@@ -99,23 +100,24 @@ export const Home = () => {
                 textColor={defaultTheme.COLORS.black}
                 />
             </ScrollView>
-            <ScrollView contentContainerStyle={styles.scrollStyle}>
-            {atendimentos.length > 0 ? atendimentos.map((atendimento) => {
-                return (<CardAtendimento 
-                    data={atendimento.data} 
-                    descricao={atendimento.descricao} 
-                    endereco={atendimento.endereco}
-                    id={atendimento.id}
-                    imagem={atendimento.imagem}
-                    nome={atendimento.nome}
-                    responsavel={atendimento.responsavel}
-                    status={atendimento.status}
-                    tipo={atendimento.tipo}
-                    key={atendimento.id}
-                    /> )
-            }) : <></>}
-            </ScrollView>
+            <FlatList contentContainerStyle={styles.scrollStyle} data={atendimentos}
+            renderItem={({item}) => {
+                return (
+                    <CardAtendimento 
+                        data={item.data} 
+                        descricao={item.descricao} 
+                        endereco={item.endereco}
+                        id={item.id}
+                        imagem={item.imagem}
+                        nome={item.nome}
+                        responsavel={item.responsavel}
+                        status={item.status}
+                        tipo={item.tipo}
+                        key={item.id}
+                        />
+                )
+            }}/>
         </View>
-        </>
+        </SafeAreaView>
     )
 }

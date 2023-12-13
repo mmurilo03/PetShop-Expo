@@ -33,9 +33,9 @@ export const styles = StyleSheet.create({
     mainButton: {
         justifyContent: "center",
         alignItems: "center",
+        marginBottom: 20
     },
     scrollStyle: {
-        paddingTop: 21,
         paddingBottom: 200
     },
 })

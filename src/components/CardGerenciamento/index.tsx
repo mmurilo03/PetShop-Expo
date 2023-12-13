@@ -3,20 +3,9 @@ import { Alert, Dimensions, Image } from "react-native";
 import { Text, View } from "react-native";
 import { api } from "../../api/api";
 import { styles } from "./styles";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
-import {
-  ParamListBase,
-  useFocusEffect,
-  useNavigation,
-} from "@react-navigation/native";
 import { ButtonIcon } from "../ButtonIcon";
 import { defaultTheme } from "../../global/styles/themes";
 import { AuthContext } from "../../context/AuthContext";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Dialog } from "react-native-simple-dialogs";
 import { Input } from "../Input";
 import { Button } from "../Button";
@@ -41,7 +30,6 @@ export const CardGerenciamento = ({
   const { user } = useContext(AuthContext);
   const [image, setImage] = useState<string>();
   const [entityHasImage, setEntityHasImage] = useState<boolean>(false);
-  const fadeAnim = useSharedValue(0);
   const [editing, setEditing] = useState(false);
   const [funcao, setFuncao] = useState("");
 
@@ -61,18 +49,6 @@ export const CardGerenciamento = ({
       } catch (error) {}
     }
   };
-
-  const callback = useCallback(() => {
-    fadeAnim.value = withTiming(0, { duration: 0 }, () => {
-      fadeAnim.value = withTiming(1, { duration: 500 });
-    });
-  }, [fadeAnim]);
-
-  const reanimatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: fadeAnim.value,
-    };
-  });
 
   const deleteAlert = () => {
     Alert.alert("Deletar responsável?", `Deletar: ${nome}?`, [
@@ -95,12 +71,8 @@ export const CardGerenciamento = ({
     getImage();
   });
 
-  useFocusEffect(() => {
-    callback();
-  });
-
   return (
-    <Animated.View style={[styles.container, reanimatedStyle]}>
+    <View style={styles.container}>
       <View style={styles.imgContainer}>
         <Image
           style={styles.entityImg}
@@ -205,6 +177,6 @@ export const CardGerenciamento = ({
       ) : (
         <></>
       )}
-    </Animated.View>
+    </View>
   );
 };

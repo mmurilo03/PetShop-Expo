@@ -5,7 +5,7 @@ import {
 } from "@react-navigation/native";
 import { CustomHeader } from "../../components/CustomHeader";
 import { styles } from "./styles";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, FlatList, ScrollView, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
@@ -15,6 +15,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { CardGerenciamento } from "../../components/CardGerenciamento";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CardGerenciamento2 } from "../../components/CardGerenciamento2";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Atendimento {
   id: number;
@@ -66,7 +67,7 @@ export const GerenciarAtendimento = () => {
   }, [navigation]);
 
   return (
-    <>
+    <SafeAreaView style={{flex:1, paddingBottom: 20}}>
       <CustomHeader toggleDrawer={drawer.toggleDrawer} search={() => {}} />
       <View style={styles.container}>
         <View style={styles.pageTitle}>
@@ -134,36 +135,29 @@ export const GerenciarAtendimento = () => {
             textColor={defaultTheme.COLORS.white}
           />
         </View>
-        <ScrollView contentContainerStyle={styles.scrollStyle}>
-          {atendimentos.length > 0 ? (
-            atendimentos.map((atendimento) => {
-              return (
-                <CardGerenciamento2
-                  id={atendimento.id}
-                  imagem={atendimento.imagem}
-                  nome={atendimento.nome}
-                  key={atendimento.id}
-                  deleteFunc={deleteAtendimento}
-                  editFunc={() => editAtendimento(atendimento.id)}
-                >
-                  <Text
-                    style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
-                  >
-                    {atendimento.tipo}
-                  </Text>
-                  <Text
-                    style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
-                  >
-                    {atendimento.responsavel}
-                  </Text>
-                </CardGerenciamento2>
-              );
-            })
-          ) : (
-            <></>
-          )}
-        </ScrollView>
+        <FlatList contentContainerStyle={styles.scrollStyle} data={atendimentos}
+        renderItem={({item}) => {
+          return (<CardGerenciamento2
+            id={item.id}
+            imagem={item.imagem}
+            nome={item.nome}
+            key={item.id}
+            deleteFunc={deleteAtendimento}
+            editFunc={() => editAtendimento(item.id)}
+          >
+            <Text
+              style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
+            >
+              {item.tipo}
+            </Text>
+            <Text
+              style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
+            >
+              {item.responsavel}
+            </Text>
+          </CardGerenciamento2>)
+        }}/>
       </View>
-    </>
+    </SafeAreaView>
   );
 };

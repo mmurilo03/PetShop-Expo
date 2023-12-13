@@ -6,7 +6,7 @@ import {
 } from "@react-navigation/native";
 import { CustomHeader } from "../../components/CustomHeader";
 import { styles } from "./styles";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, FlatList, ScrollView, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
@@ -15,6 +15,7 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { CardGerenciamento } from "../../components/CardGerenciamento";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Entity {
   nome: string,
@@ -70,7 +71,7 @@ export const GerenciarResponsaveis = () => {
   }, [navigation]);
 
   return (
-    <>
+    <SafeAreaView style={{flex:1, paddingBottom: 20}}>
       <CustomHeader toggleDrawer={drawer.toggleDrawer} search={() => {}} />
       <View style={styles.container}>
         <View style={styles.pageTitle}>
@@ -140,31 +141,25 @@ export const GerenciarResponsaveis = () => {
             textColor={defaultTheme.COLORS.white}
           />
         </View>
-        <ScrollView contentContainerStyle={styles.scrollStyle}>
-        {responsaveis.length > 0 ? (
-          responsaveis.map((responsavel) => {
-            return (
-              <CardGerenciamento
-                id={responsavel.id}
-                imagem={responsavel.imagem}
-                nome={responsavel.nome}
-                key={responsavel.id}
-                deleteFunc={deleteResponsavel}
-                editFunc={editResponsavel}
+        <FlatList contentContainerStyle={styles.scrollStyle} data={responsaveis}
+        renderItem={({item}) => {
+          return (
+            <CardGerenciamento
+              id={item.id}
+              imagem={item.imagem}
+              nome={item.nome}
+              key={item.id}
+              deleteFunc={deleteResponsavel}
+              editFunc={editResponsavel}
+            >
+              <Text
+                style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
               >
-                <Text
-                  style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
-                >
-                  {responsavel.funcao}
-                </Text>
-              </CardGerenciamento>
-            );
-          })
-        ) : (
-          <></>
-        )}
-            </ScrollView>
+                {item.funcao}
+              </Text>
+            </CardGerenciamento>)
+        }}/>
       </View>
-    </>
+    </SafeAreaView>
   );
 };

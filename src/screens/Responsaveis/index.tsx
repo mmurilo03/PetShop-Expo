@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native"
+import { FlatList, ScrollView, Text, View } from "react-native"
 import { styles } from "./styles"
 import { DrawerActionHelpers, ParamListBase, useNavigation } from "@react-navigation/native";
 import { ReactNode, useContext, useEffect, useState } from "react";
@@ -11,6 +11,7 @@ import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CardEnditade } from "../../components/CardEntidade";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Entity {
     nome: string,
@@ -52,7 +53,7 @@ export const Responsaveis = () => {
     }, [])
 
     return (
-        <>
+        <SafeAreaView style={{flex:1, paddingBottom: 20}}>
         <CustomHeader toggleDrawer={drawer.toggleDrawer} search={() => {}}/>
         <View style={styles.container}>
             <View style={styles.pageTitle}>
@@ -97,18 +98,17 @@ export const Responsaveis = () => {
                 textColor={defaultTheme.COLORS.black}
                 />
             </ScrollView>
-            <ScrollView contentContainerStyle={styles.scrollStyle}>
-            {responsaveis.length > 0 ? responsaveis.map((responsavel) => {
-                return (<CardEnditade id={responsavel.id}
-                    imagem={responsavel.imagem}
-                    nome={responsavel.nome}
-                    key={responsavel.id}>  
-                        <Text>Email: {responsavel.email}</Text>
-                        <Text>Função: {responsavel.funcao}</Text>
-                    </CardEnditade> )
-            }) : <></>}
-            </ScrollView>
+            <FlatList contentContainerStyle={styles.scrollStyle} data={responsaveis}
+            renderItem={({item}) => {
+                return (<CardEnditade id={item.id}
+                    imagem={item.imagem}
+                    nome={item.nome}
+                    key={item.id}>
+                        <Text>Email: {item.email}</Text>
+                        <Text>Função: {item.funcao}</Text>
+                    </CardEnditade>)
+            }}/>
         </View>
-        </>
+        </SafeAreaView>
     )
 }

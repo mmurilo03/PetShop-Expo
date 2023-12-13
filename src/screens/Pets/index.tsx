@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native"
+import { FlatList, ScrollView, Text, View } from "react-native"
 import { styles } from "./styles"
 import { DrawerActionHelpers, ParamListBase, useNavigation } from "@react-navigation/native";
 import { ReactNode, useContext, useEffect, useState } from "react";
@@ -11,6 +11,7 @@ import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CardEnditade } from "../../components/CardEntidade";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Entity {
     nome: string,
@@ -53,7 +54,7 @@ export const Pets = () => {
     }, [])
 
     return (
-        <>
+        <SafeAreaView style={{flex:1, paddingBottom: 20}}>
         <CustomHeader toggleDrawer={drawer.toggleDrawer} search={() => {}}/>
         <View style={styles.container}>
             <View style={styles.pageTitle}>
@@ -98,19 +99,18 @@ export const Pets = () => {
                 textColor={defaultTheme.COLORS.gray}
                 />
             </ScrollView>
-            <ScrollView contentContainerStyle={styles.scrollStyle}>
-            {pets.length > 0 ? pets.map((pet) => {
-                return (<CardEnditade id={pet.id}
-                    imagem={pet.imagem}
-                    nome={pet.nome}
-                    key={pet.id}>  
-                        <Text>Tutor: {pet.tutor}</Text>
-                        <Text>Telefone: {pet.telefone}</Text>
-                        <Text>Endereço: {pet.endereco}</Text>
-                    </CardEnditade> )
-            }) : <></>}
-            </ScrollView>
+            <FlatList contentContainerStyle={styles.scrollStyle} data={pets}
+            renderItem={({item}) => {
+                return (<CardEnditade id={item.id}
+                    imagem={item.imagem}
+                    nome={item.nome}
+                    key={item.id}>  
+                        <Text>Tutor: {item.tutor}</Text>
+                        <Text>Telefone: {item.telefone}</Text>
+                        <Text>Endereço: {item.endereco}</Text>
+                    </CardEnditade>)
+            }}/>
         </View>
-        </>
+        </SafeAreaView>
     )
 }
