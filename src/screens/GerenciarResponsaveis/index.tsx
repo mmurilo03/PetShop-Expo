@@ -49,7 +49,6 @@ export const GerenciarResponsaveis = () => {
   const editResponsavel = async (editedId: number, funcao: string) => {
     try {
       api.defaults.headers.common.Authorization = user.token;
-      console.log(editedId, funcao);
       
       await api.patch(`/responsavel/editSimple/${editedId}`, { funcao: funcao });
       getResponsaveis();
