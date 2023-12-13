@@ -14,5 +14,12 @@ export const styles = StyleSheet.create({
     },
     icon: {
         color: defaultTheme.COLORS.white
+    },
+    input: {
+        width: 250,
+        height: 30,
+        backgroundColor: defaultTheme.COLORS.white,
+        borderRadius: 5,
+        textAlign: "center"
     }
 })

@@ -5,16 +5,16 @@ import {
 } from "@react-navigation/native";
 import { CustomHeader } from "../../components/CustomHeader";
 import { styles } from "./styles";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, FlatList, ScrollView, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
 import { api } from "../../api/api";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { CardGerenciamento } from "../../components/CardGerenciamento";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CardGerenciamento2 } from "../../components/CardGerenciamento2";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Atendimento {
   id: number;
@@ -36,8 +36,12 @@ export const GerenciarAtendimento = () => {
   const [atendimentos, setAtendimentos] = useState<Atendimento[]>(
     [] as Atendimento[]
   );
+  const [atendimentosFiltrados, setAtendimentosFiltrados] = useState<
+    Atendimento[]
+  >([] as Atendimento[]);
 
   const { user } = useContext(AuthContext);
+  const [searchText, setSearchText] = useState<string>("");
 
   const getAtendimentos = async () => {
     api.defaults.headers.common.Authorization = user.token;
@@ -51,23 +55,51 @@ export const GerenciarAtendimento = () => {
       await api.delete(`/atendimento/delete/${deleteId}`);
       getAtendimentos();
     } catch (e: any) {
-        Alert.alert(e.response.data.error)
+      Alert.alert(e.response.data.error);
     }
-  }
+  };
 
   const editAtendimento = async (editedId: number) => {
-    navigation.navigate("EditAtendimento", {editedId: editedId})
-  }
+    navigation.navigate("EditAtendimento", { editedId: editedId });
+  };
+
+  const filtrar = () => {
+    const filtrados: Atendimento[] = [];
+    atendimentos.forEach((atendimento) => {
+      if (
+        atendimento.descricao
+          .toLowerCase()
+          .includes(searchText.toLowerCase()) ||
+        atendimento.nome.toLowerCase().includes(searchText.toLowerCase()) ||
+        atendimento.responsavel
+          .toLowerCase()
+          .includes(searchText.toLowerCase()) ||
+        atendimento.tipo.toLowerCase().includes(searchText.toLowerCase())
+      ) {
+        filtrados.push(atendimento);
+      }
+    });
+    setAtendimentosFiltrados(filtrados);
+  };
 
   useEffect(() => {
     navigation.addListener("focus", () => {
       getAtendimentos();
-    })
+    });
   }, [navigation]);
 
+  useEffect(() => {
+    filtrar();
+  }, [searchText]);
+
   return (
-    <>
-      <CustomHeader toggleDrawer={drawer.toggleDrawer} search={() => {}} />
+    <SafeAreaView style={{ flex: 1, paddingBottom: 20 }}>
+      <CustomHeader
+        toggleDrawer={drawer.toggleDrawer}
+        onChangeText={(text) => {
+          setSearchText(text);
+        }}
+      />
       <View style={styles.container}>
         <View style={styles.pageTitle}>
           <Ionicons
@@ -102,7 +134,9 @@ export const GerenciarAtendimento = () => {
             width={0.35}
             iconColor={defaultTheme.COLORS.black}
             iconName="briefcase-medical"
-            onPress={() => {navigation.navigate("GerenciarResponsaveis")}}
+            onPress={() => {
+              navigation.navigate("GerenciarResponsaveis");
+            }}
             size={16}
             text="Responsaveis"
             textColor={defaultTheme.COLORS.black}
@@ -114,7 +148,9 @@ export const GerenciarAtendimento = () => {
             width={0.35}
             iconColor={defaultTheme.COLORS.black}
             iconName="paw"
-            onPress={() => {navigation.navigate("GerenciarPets")}}
+            onPress={() => {
+              navigation.navigate("GerenciarPets");
+            }}
             size={16}
             text="Pets"
             textColor={defaultTheme.COLORS.black}
@@ -128,42 +164,46 @@ export const GerenciarAtendimento = () => {
             width={0.5}
             iconColor={defaultTheme.COLORS.white}
             iconName="plus"
-            onPress={() => {navigation.navigate("CadastrarAtendimento")}}
+            onPress={() => {
+              navigation.navigate("CadastrarAtendimento");
+            }}
             size={16}
             text="Cadastrar"
             textColor={defaultTheme.COLORS.white}
           />
         </View>
-        <ScrollView contentContainerStyle={styles.scrollStyle}>
-          {atendimentos.length > 0 ? (
-            atendimentos.map((atendimento) => {
-              return (
-                <CardGerenciamento2
-                  id={atendimento.id}
-                  imagem={atendimento.imagem}
-                  nome={atendimento.nome}
-                  key={atendimento.id}
-                  deleteFunc={deleteAtendimento}
-                  editFunc={() => editAtendimento(atendimento.id)}
+        <FlatList
+          contentContainerStyle={styles.scrollStyle}
+          data={
+            atendimentosFiltrados.length > 0
+              ? atendimentosFiltrados
+              : atendimentos
+          }
+          renderItem={({ item }) => {
+            return (
+              <CardGerenciamento2
+                id={item.id}
+                imagem={item.imagem}
+                nome={item.nome}
+                key={item.id}
+                deleteFunc={deleteAtendimento}
+                editFunc={() => editAtendimento(item.id)}
+              >
+                <Text
+                  style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
                 >
-                  <Text
-                    style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
-                  >
-                    {atendimento.tipo}
-                  </Text>
-                  <Text
-                    style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
-                  >
-                    {atendimento.responsavel}
-                  </Text>
-                </CardGerenciamento2>
-              );
-            })
-          ) : (
-            <></>
-          )}
-        </ScrollView>
+                  {item.tipo}
+                </Text>
+                <Text
+                  style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
+                >
+                  {item.responsavel}
+                </Text>
+              </CardGerenciamento2>
+            );
+          }}
+        />
       </View>
-    </>
+    </SafeAreaView>
   );
 };

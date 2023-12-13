@@ -5,7 +5,7 @@ import {
 } from "@react-navigation/native";
 import { CustomHeader } from "../../components/CustomHeader";
 import { styles } from "./styles";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, FlatList, ScrollView, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
@@ -15,13 +15,15 @@ import { AuthContext } from "../../context/AuthContext";
 import { CardGerenciamento } from "../../components/CardGerenciamento";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CardGerenciamento2 } from "../../components/CardGerenciamento2";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Entity {
-  nome: string,
-  imagem: string,
-  tutor: string,
-  id: number,
-  children: ReactNode
+  nome: string;
+  imagem: string;
+  tutor: string;
+  id: number;
+  telefone: string;
+  children: ReactNode;
 }
 
 export const GerenciarPets = () => {
@@ -29,16 +31,31 @@ export const GerenciarPets = () => {
 
   const drawer = useNavigation<DrawerActionHelpers<ParamListBase>>();
 
-  const [pets, setPets] = useState<Entity[]>(
-    [] as Entity[]
-  );
+  const [pets, setPets] = useState<Entity[]>([] as Entity[]);
+
+  const [petsFiltrados, setPetsFiltados] = useState<Entity[]>([] as Entity[]);
 
   const { user } = useContext(AuthContext);
 
+  const [searchText, setSearchText] = useState<string>("");
   const getPets = async () => {
     api.defaults.headers.common.Authorization = user.token;
     const res = await api.get("/pet");
     setPets(res.data.pets);
+  };
+
+  const filtrar = () => {
+    const filtrados: Entity[] = [];
+    pets.forEach((pet) => {
+      if (
+        pet.nome.toLowerCase().includes(searchText.toLowerCase()) ||
+        pet.tutor.toLowerCase().includes(searchText.toLowerCase()) ||
+        pet.telefone.toLowerCase().includes(searchText.toLowerCase())
+      ) {
+        filtrados.push(pet);
+      }
+    });
+    setPetsFiltados(filtrados);
   };
 
   const deletePet = async (deleteId: number) => {
@@ -47,24 +64,32 @@ export const GerenciarPets = () => {
       await api.delete(`/pet/delete/${deleteId}`);
       getPets();
     } catch (e: any) {
-        Alert.alert(e.response.data.error)
+      Alert.alert(e.response.data.error);
     }
-  }
+  };
 
   const editPet = async (editedId: number) => {
-    navigation.navigate("EditPet", {editedId: editedId})
-  }
+    navigation.navigate("EditPet", { editedId: editedId });
+  };
 
   useEffect(() => {
     navigation.addListener("focus", () => {
       getPets();
-    })
+    });
   }, [navigation]);
 
+  useEffect(() => {
+    filtrar();
+  }, [searchText]);
 
   return (
-    <>
-      <CustomHeader toggleDrawer={drawer.toggleDrawer} search={() => {}} />
+    <SafeAreaView style={{ flex: 1, paddingBottom: 20 }}>
+      <CustomHeader
+        toggleDrawer={drawer.toggleDrawer}
+        onChangeText={(text) => {
+          setSearchText(text);
+        }}
+      />
       <View style={styles.container}>
         <View style={styles.pageTitle}>
           <Ionicons
@@ -87,7 +112,9 @@ export const GerenciarPets = () => {
             width={0.35}
             iconColor={defaultTheme.COLORS.black}
             iconName="list-ul"
-            onPress={() => {navigation.navigate("GerenciarAtendimento")}}
+            onPress={() => {
+              navigation.navigate("GerenciarAtendimento");
+            }}
             size={16}
             text="Atendimentos"
             textColor={defaultTheme.COLORS.black}
@@ -99,7 +126,9 @@ export const GerenciarPets = () => {
             width={0.35}
             iconColor={defaultTheme.COLORS.black}
             iconName="briefcase-medical"
-            onPress={() => {navigation.navigate("GerenciarResponsaveis")}}
+            onPress={() => {
+              navigation.navigate("GerenciarResponsaveis");
+            }}
             size={16}
             text="Responsaveis"
             textColor={defaultTheme.COLORS.black}
@@ -125,37 +154,39 @@ export const GerenciarPets = () => {
             width={0.5}
             iconColor={defaultTheme.COLORS.white}
             iconName="plus"
-            onPress={() => {navigation.navigate("CadastrarPet")}}
+            onPress={() => {
+              navigation.navigate("CadastrarPet");
+            }}
             size={16}
             text="Cadastrar"
             textColor={defaultTheme.COLORS.white}
           />
         </View>
-        <ScrollView contentContainerStyle={styles.scrollStyle}>
-        {pets.length > 0 ? (
-          pets.map((pet) => {
+        <FlatList
+          contentContainerStyle={styles.scrollStyle}
+          data={petsFiltrados.length > 0 ? petsFiltrados : pets}
+          renderItem={({ item }) => {
             return (
               <CardGerenciamento2
-                id={pet.id}
-                imagem={pet.imagem}
-                nome={pet.nome}
-                key={pet.id}
+                id={item.id}
+                imagem={item.imagem}
+                nome={item.nome}
+                key={item.id}
                 deleteFunc={deletePet}
-                editFunc={() => {editPet(pet.id)}}
+                editFunc={() => {
+                  editPet(item.id);
+                }}
               >
                 <Text
                   style={{ color: defaultTheme.COLORS.white, fontSize: 14 }}
                 >
-                  {pet.tutor}
+                  {item.tutor}
                 </Text>
               </CardGerenciamento2>
             );
-          })
-        ) : (
-          <></>
-        )}
-            </ScrollView>
+          }}
+        />
       </View>
-    </>
+    </SafeAreaView>
   );
 };
