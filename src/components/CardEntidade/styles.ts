@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
 
     container: {
         width: Dimensions.get("screen").width * 0.8,
-        height: Dimensions.get("screen").height * 0.15,
+        minHeight: Dimensions.get("screen").height * 0.15,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     
     imgContainer: {
         aspectRatio: 1,
-        height: "100%",
+        height: Dimensions.get("screen").height * 0.15,
     },
 
     entityImg: {
@@ -35,9 +35,16 @@ export const styles = StyleSheet.create({
         height: "100%",
     },
 
-    entityContent: {
-        alignItems: "center",
+    entityContentTitle: {
+        alignItems: "flex-start",
         justifyContent: "center"
+    },
+
+    entityContent: {
+        alignItems: "flex-start",
+        justifyContent: "center",
+        marginLeft: 5,
+        marginBottom: 5
     },
     
     cardText: {

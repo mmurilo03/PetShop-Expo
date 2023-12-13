@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
-import { Alert, Dimensions, Image } from "react-native";
+import { Alert, Dimensions, Image, LayoutChangeEvent } from "react-native";
 import { Text, View } from "react-native";
 import { api } from "../../api/api";
 import { styles } from "./styles";
@@ -32,6 +32,7 @@ export const CardGerenciamento = ({
   const [entityHasImage, setEntityHasImage] = useState<boolean>(false);
   const [editing, setEditing] = useState(false);
   const [funcao, setFuncao] = useState("");
+  const [buttonHeight, setButtonHeight] = useState<number>(0);
 
   const getImage = async () => {
     try {
@@ -88,7 +89,7 @@ export const CardGerenciamento = ({
           styles.entityName,
           user.id != 1
             ? {
-                width: "81%",
+                width: "75%",
                 borderTopRightRadius: 5,
                 borderBottomRightRadius: 5,
               }
@@ -102,7 +103,13 @@ export const CardGerenciamento = ({
       </View>
       {user.id == 1 ? (
         <>
-          <View>
+          <View
+            style={styles.actionIcons}
+            onLayout={(event: LayoutChangeEvent) => {
+              const { height } = event.nativeEvent.layout;
+              setButtonHeight(height);
+            }}
+          >
             <ButtonIcon
               iconColor={defaultTheme.COLORS.white}
               iconName="pencil-alt"
@@ -110,7 +117,7 @@ export const CardGerenciamento = ({
                 editAlert();
               }}
               size={40}
-              height={Dimensions.get("screen").height * 0.1}
+              height={buttonHeight}
               width={Dimensions.get("screen").height * 0.06}
               background={defaultTheme.COLORS.graySecond}
             />
@@ -123,7 +130,7 @@ export const CardGerenciamento = ({
                 deleteAlert();
               }}
               size={40}
-              height={Dimensions.get("screen").height * 0.1}
+              height={buttonHeight}
               width={Dimensions.get("screen").height * 0.06}
               background={defaultTheme.COLORS.red}
               border={{ topRight: 5, bottomRight: 5 }}

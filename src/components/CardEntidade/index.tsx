@@ -44,7 +44,7 @@ export const CardEnditade = ({id, nome, imagem, children}: Entity) => {
                 <Image style={styles.entityImg} source={entityHasImage ? {uri: image} : require("../../images/abstract-user-icon-3.png")} />
             </View>
             <View style={styles.entityName}>
-                <View style={styles.entityContent}>
+                <View style={styles.entityContentTitle}>
                     <Text style={styles.cardText}>{nome}</Text>
                 </View>
                 <View style={styles.entityContent}>
