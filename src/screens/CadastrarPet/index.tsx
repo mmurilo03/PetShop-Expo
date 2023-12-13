@@ -147,7 +147,9 @@ export const CadastrarPet = () => {
             width={0.3}
             iconColor={defaultTheme.COLORS.white}
             iconName="clipboard-list"
-            onPress={() => {setShowForm(true)}}
+            onPress={() => {
+              setShowForm(true);
+            }}
             size={16}
             text="Formulário"
             textColor={defaultTheme.COLORS.white}
@@ -159,92 +161,97 @@ export const CadastrarPet = () => {
             width={0.3}
             iconColor={defaultTheme.COLORS.white}
             iconName="map-marked-alt"
-            onPress={() => {setShowForm(false)}}
+            onPress={() => {
+              setShowForm(false);
+            }}
             size={16}
             text="Endereco"
             textColor={defaultTheme.COLORS.white}
           />
         </View>
-        
+
         <ScrollView contentContainerStyle={styles.formPerfil}>
-          {showForm ? 
-          <>
-          <View style={styles.imageContainer}>
-          <View>
-            <Image
-              style={styles.image}
-              source={
-                userHasImage
-                  ? { uri: image }
-                  : require("../../images/kisspng-cat-computer-icons-user-profile-5ae8658e7a9b63.4256720315251797905022.png")
-              }
-            />
-            <View style={styles.iconCam}>
-              <ButtonIcon
-                iconColor={defaultTheme.COLORS.black}
-                iconName="camera"
-                onPress={onButtonPress}
-                size={30}
+          {showForm ? (
+            <>
+              <View style={styles.imageContainer}>
+                <View>
+                  <Image
+                    style={styles.image}
+                    source={
+                      userHasImage
+                        ? { uri: image }
+                        : require("../../images/kisspng-cat-computer-icons-user-profile-5ae8658e7a9b63.4256720315251797905022.png")
+                    }
+                  />
+                  <View style={styles.iconCam}>
+                    <ButtonIcon
+                      iconColor={defaultTheme.COLORS.black}
+                      iconName="camera"
+                      onPress={onButtonPress}
+                      size={30}
+                    />
+                  </View>
+                </View>
+              </View>
+              <Input
+                label="Nome"
+                value={nome}
+                onChangeText={(text) => setNome(text)}
+                placeholder="Nome"
+                size={16}
               />
-            </View>
-          </View>
-        </View>
-          <Input
-            label="Nome"
-            value={nome}
-            onChangeText={(text) => setNome(text)}
-            placeholder="Nome"
-            size={16}
-          />
-          <Input
-            label="Tutor"
-            value={tutor}
-            onChangeText={(text) => setTutor(text)}
-            placeholder="Tutor"
-            size={16}
-          />
-          <Input
-            label="Telefone"
-            value={telefone}
-            onChangeText={(text) => setTelefone(text)}
-            placeholder="Telefone"
-            size={16}
-          /></>
-        : 
-        <View style={styles.mapContainer}>
-          {enderecoAtual ? (
-            <MapView
-              style={styles.mapContainer}
-              initialRegion={{
-                latitude: enderecoAtual.latitude,
-                longitude: enderecoAtual.longitude,
-                latitudeDelta: 10,
-                longitudeDelta: 10,
-              }}
-              showsUserLocation
-              showsMyLocationButton
-              onPress={(mapLocation: MapPressEvent) => {
-                const marker: EnderecoCoord = {
-                  latitude: mapLocation.nativeEvent.coordinate.latitude,
-                  longitude: mapLocation.nativeEvent.coordinate.longitude,
-                };
-                setMarkerLocation(marker);
-              }}
-            >
-              {markerLocation && (
-                <Marker
-                  coordinate={{
-                    latitude: markerLocation.latitude,
-                    longitude: markerLocation.longitude,
-                  }}
-                />
-              )}
-            </MapView>
+              <Input
+                label="Tutor"
+                value={tutor}
+                onChangeText={(text) => setTutor(text)}
+                placeholder="Tutor"
+                size={16}
+              />
+              <Input
+                label="Telefone"
+                value={telefone}
+                onChangeText={(text) => setTelefone(text)}
+                placeholder="Telefone"
+                size={16}
+              />
+            </>
           ) : (
-            <></>
+            <View style={styles.mapContainer}>
+              {enderecoAtual ? (
+                <MapView
+                  zoomControlEnabled
+                  style={styles.mapContainer}
+                  initialRegion={{
+                    latitude: enderecoAtual.latitude,
+                    longitude: enderecoAtual.longitude,
+                    latitudeDelta: 0.007,
+                    longitudeDelta: 0.007,
+                  }}
+                  showsUserLocation
+                  showsMyLocationButton
+                  onPress={(mapLocation: MapPressEvent) => {
+                    const marker: EnderecoCoord = {
+                      latitude: mapLocation.nativeEvent.coordinate.latitude,
+                      longitude: mapLocation.nativeEvent.coordinate.longitude,
+                    };
+                    setMarkerLocation(marker);
+                  }}
+                >
+                  {markerLocation && (
+                    <Marker
+                      coordinate={{
+                        latitude: markerLocation.latitude,
+                        longitude: markerLocation.longitude,
+                      }}
+                    />
+                  )}
+                </MapView>
+              ) : (
+                <></>
+              )}
+            </View>
           )}
-        </View>}
-          
+
           <Button
             color={defaultTheme.COLORS.blueMain}
             fontSize={16}
