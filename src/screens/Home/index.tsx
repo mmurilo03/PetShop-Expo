@@ -152,7 +152,7 @@ export const Home = () => {
         <FlatList
           contentContainerStyle={styles.scrollStyle}
           data={
-            atendimentosFiltrados.length > 0
+            searchText.length > 0
               ? atendimentosFiltrados
               : atendimentos
           }

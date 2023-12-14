@@ -49,6 +49,12 @@ export const EditResponsavel = () => {
     } else if (telefone.length <= 0) {
       Alert.alert("Digite um telefone")
       return
+    } else if (senhaAntiga.length <= 0) {
+      Alert.alert("Digite sua senha antiga")
+      return
+    } else if (novaSenha.length <= 0 || confirmarNovaSenha.length <= 0) {
+      Alert.alert("Digite uma senha nova")
+      return
     } else if (novaSenha != confirmarNovaSenha) {
       Alert.alert("Senhas não coincidem")
       return
@@ -78,6 +84,10 @@ export const EditResponsavel = () => {
         
         const newUser = await api.patch("/responsavel/edit", form, config);
         updateUser(newUser.data.responsavelEdited)
+        setSenhaAntiga("")
+        setNovaSenha("")
+        setConfirmarNovaSenha("")
+        navigation.goBack();
     } catch (e: any) {
         Alert.alert(e.response)
         
@@ -100,25 +110,31 @@ export const EditResponsavel = () => {
   };
 
   const saveImage = (image: string) => {
+    setImage(image);
     setNewImage(image);
   };
 
   const getUserImage = async () => {
-    try {
-      await api.get(`images/${user.img}`);
-      setUserHasImage(true);
-    } catch (e) {
-      setUserHasImage(false);
+    if (newImage.length > 0) {
+      setImage(image);
+      setUserHasImage(true)
+    } else {
+      try {
+        await api.get(`images/${user.img}`);
+        setUserHasImage(true);
+      } catch (e) {
+        setUserHasImage(false);
+      }
+      if (userHasImage) {
+        try {
+          const image = api.getUri({ url: `images/${user.img}` });
+          setImage(image);
+          setNewImage(image);
+          return image;
+        } catch (error) {}
+      }
     }
 
-    if (userHasImage) {
-      try {
-        const image = api.getUri({ url: `images/${user.img}` });
-        setImage(image);
-        setNewImage(image);
-        return image;
-      } catch (error) {}
-    }
   };
   useEffect(() => {
     getUserImage();
@@ -144,7 +160,7 @@ export const EditResponsavel = () => {
               style={styles.image}
               source={
                 userHasImage
-                  ? { uri: image }
+                  ? { uri: newImage.length > 0 ? newImage : image }
                   : require("../../images/abstract-user-icon-3.png")
               }
             />

@@ -178,7 +178,7 @@ export const GerenciarResponsaveis = () => {
         <FlatList
           contentContainerStyle={styles.scrollStyle}
           data={
-            responsaveisFiltrados.length > 0
+            searchText.length > 0
               ? responsaveisFiltrados
               : responsaveis
           }

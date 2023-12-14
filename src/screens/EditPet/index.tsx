@@ -106,7 +106,6 @@ export const EditPet = () => {
       await api.patch("/pet/edit", form, config);
       navigation.navigate("GerenciarPets");
     } catch (e: any) {
-      Alert.alert(e.response.data.error);
     }
   };
 

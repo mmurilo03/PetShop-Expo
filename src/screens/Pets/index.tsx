@@ -153,7 +153,7 @@ export const Pets = () => {
         </ScrollView>
         <FlatList
           contentContainerStyle={styles.scrollStyle}
-          data={petsFiltrados.length > 0 ? petsFiltrados : pets}
+          data={searchText.length > 0 ? petsFiltrados : pets}
           renderItem={({ item }) => {
             return (
             <TouchableOpacity onPress={() => {navigation.navigate("DetalhesPet", {petId: item.id})}}>
