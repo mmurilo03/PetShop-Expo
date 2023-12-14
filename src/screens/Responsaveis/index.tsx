@@ -154,7 +154,7 @@ export const Responsaveis = () => {
         </ScrollView>
         <FlatList
           contentContainerStyle={styles.scrollStyle}
-          data={responsaveisFiltrados.length > 0 ? responsaveisFiltrados : responsaveis}
+          data={searchText.length > 0 ? responsaveisFiltrados : responsaveis}
           renderItem={({ item }) => {
             return (
               <CardEnditade

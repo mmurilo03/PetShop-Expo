@@ -164,7 +164,7 @@ export const GerenciarPets = () => {
         </View>
         <FlatList
           contentContainerStyle={styles.scrollStyle}
-          data={petsFiltrados.length > 0 ? petsFiltrados : pets}
+          data={searchText.length > 0 ? petsFiltrados : pets}
           renderItem={({ item }) => {
             return (
               <CardGerenciamento2
