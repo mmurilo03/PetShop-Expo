@@ -24,7 +24,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import MapView, { MapPressEvent, Marker } from "react-native-maps";
 import * as ExpoLocation from "expo-location";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
-import { Starting } from "../Starting";
+import { LoadingScreen } from "../../components/LoadingScreen";
 
 type EnderecoCoord = {
   latitude: number;
@@ -183,7 +183,7 @@ export const EditPet = () => {
   }, [locationAccess, loadingPet, userHasImage]);
 
   if (loadingPet) {
-    return <Starting />;
+    return <LoadingScreen />;
   }
 
   return (

@@ -5,7 +5,8 @@ import { api } from "../../api/api";
 import { styles } from "./styles";
 import { ButtonIcon } from "../ButtonIcon";
 import { defaultTheme } from "../../global/styles/themes";
-import { AuthContext } from "../../context/AuthContext";
+import Animated, { BounceIn, SlideInLeft } from "react-native-reanimated";
+import { Loading } from "../Loading";
 
 interface Entity {
   nome: string;
@@ -27,7 +28,10 @@ export const CardGerenciamento2 = ({
   const [image, setImage] = useState<string>();
   const [entityHasImage, setEntityHasImage] = useState<boolean>(false);
   const [buttonHeight, setButtonHeight] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
+
   const getImage = async () => {
+    setLoading(false)
     try {
       await api.get(`images/${imagem}`);
       setEntityHasImage(true);
@@ -41,6 +45,8 @@ export const CardGerenciamento2 = ({
         setImage(image);
         return image;
       } catch (error) {}
+    } else {
+      setImage("../../images/abstract-user-icon-3.png")
     }
   };
 
@@ -61,17 +67,21 @@ export const CardGerenciamento2 = ({
     getImage();
   });
 
+  if (loading) {
+    return (<Loading styles={{width: styles.container.width, height: styles.container.minHeight}}/>)
+  }
+
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container} entering={SlideInLeft.duration(1000)}>
       <View style={styles.imgContainer}>
-        <Image
+        {image ? <Image
           style={styles.entityImg}
           source={
             entityHasImage
               ? { uri: image }
               : require("../../images/abstract-user-icon-3.png")
           }
-        />
+        /> : <Loading styles={{width: styles.imgContainer.height, height: styles.imgContainer.height}}/>}
       </View>
       <View style={styles.entityName}>
         <View style={styles.entityTitle}>
@@ -80,10 +90,12 @@ export const CardGerenciamento2 = ({
         <View style={styles.entityContent}>{children}</View>
       </View>
 
-      <View style={styles.actionIcons} onLayout={(event: LayoutChangeEvent) => {
+      <Animated.View style={styles.actionIcons} onLayout={(event: LayoutChangeEvent) => {
         const { height } = event.nativeEvent.layout;
         setButtonHeight(height)
-      }}>
+      }}
+      entering={BounceIn.duration(1500)}
+      >
         <ButtonIcon
           iconColor={defaultTheme.COLORS.white}
           iconName="pencil-alt"
@@ -95,8 +107,8 @@ export const CardGerenciamento2 = ({
           width={Dimensions.get("screen").height * 0.06}
           background={defaultTheme.COLORS.graySecond}
         />
-      </View>
-      <View style={[styles.actionIcons, styles.deleteButton]}>
+      </Animated.View>
+      <Animated.View style={[styles.actionIcons, styles.deleteButton]} entering={BounceIn.duration(1500)}>
         <ButtonIcon
           iconColor={defaultTheme.COLORS.white}
           iconName="trash"
@@ -109,7 +121,7 @@ export const CardGerenciamento2 = ({
           background={defaultTheme.COLORS.red}
           border={{ topRight: 5, bottomRight: 5 }}
         />
-      </View>
-    </View>
+      </Animated.View>
+    </Animated.View>
   );
 };

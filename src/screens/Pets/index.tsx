@@ -18,6 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TextBold } from "../../components/TextBold";
 import { CardPet } from "../../components/CardPet";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { LoadingScreen } from "../../components/LoadingScreen";
 
 interface Entity {
   nome: string;
@@ -38,16 +39,19 @@ export const Pets = () => {
   const [pets, setPets] = useState<Entity[]>([] as Entity[]);
   const [petsFiltrados, setPetsFiltados] = useState<Entity[]>([] as Entity[]);
   const [searchText, setSearchText] = useState<string>("");
+  const [loading, setLoading] = useState(true);
   const getPets = async () => {
     api.defaults.headers.common.Authorization = user.token;
     const res = await api.get("/pet");
     setPets(res.data.pets);
+    setLoading(false)
   };
 
   const navigateLogout = () => {
     logout();
     navigation.navigate("Login");
   };
+
   const filtrar = () => {
     const filtrados: Entity[] = [];
     pets.forEach((pet) => {
@@ -61,6 +65,7 @@ export const Pets = () => {
     });
     setPetsFiltados(filtrados);
   };
+
   useEffect(() => {
     if (!validToken) {
       navigateLogout();
@@ -68,12 +73,24 @@ export const Pets = () => {
   });
 
   useEffect(() => {
-    getPets();
-  }, []);
+    navigation.addListener("focus", () => {
+      getPets();      
+    });
+  }, [navigation]);
+
+  useEffect(() => {
+    navigation.addListener("blur", () => {
+      setLoading(true)      
+    });
+  }, [navigation]);
 
   useEffect(() => {
     filtrar();
   }, [searchText]);
+
+  if (loading) {
+    return (<LoadingScreen />)
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, paddingBottom: 20 }}>
@@ -144,7 +161,7 @@ export const Pets = () => {
                 id={item.id}
                 imagem={item.imagem}
                 nome={item.nome}
-                key={item.id}
+                key={Math.random()}
                 endereco={item.endereco}
               >
                 <Text><TextBold text="Tutor: "/>{item.tutor}</Text>

@@ -3,6 +3,8 @@ import { Image } from "react-native"
 import { Text, View } from "react-native"
 import { api } from "../../api/api"
 import { styles } from "./styles"
+import Animated, { SlideInLeft } from "react-native-reanimated"
+import { Loading } from "../Loading"
 
 interface Entity {
     nome: string,
@@ -15,6 +17,7 @@ export const CardEnditade = ({id, nome, imagem, children}: Entity) => {
 
     const [image, setImage] = useState<string>();
     const [entityHasImage, setEntityHasImage] = useState<boolean>(false);
+    const [loading, setLoading] = useState(true);
 
     const getImage = async () => {        
         try {
@@ -28,9 +31,13 @@ export const CardEnditade = ({id, nome, imagem, children}: Entity) => {
             try {
                 const image = api.getUri({url: `images/${imagem}`});                
                 setImage(image)
+                setLoading(false)
                 return image
             } catch (error) {
             }
+        } else {
+            setImage("../../images/abstract-user-icon-3.png")
+            setLoading(false)
         }
     }
     
@@ -38,10 +45,17 @@ export const CardEnditade = ({id, nome, imagem, children}: Entity) => {
         getImage();
     })
 
+    if (loading) {
+        return (<Loading styles={{width: styles.container.width, height: styles.container.minHeight}}/>)
+    }
+
     return (
-        <View style={styles.container}>
+        <Animated.View style={styles.container} entering={SlideInLeft.duration(1000)} >
             <View style={styles.imgContainer}>
+                {image ? 
                 <Image style={styles.entityImg} source={entityHasImage ? {uri: image} : require("../../images/abstract-user-icon-3.png")} />
+                : <Loading styles={{width: styles.imgContainer.height, height: styles.imgContainer.height}} />
+                }
             </View>
             <View style={styles.entityName}>
                 <View style={styles.entityContentTitle}>
@@ -51,6 +65,6 @@ export const CardEnditade = ({id, nome, imagem, children}: Entity) => {
                     {children}
                 </View>
             </View>
-        </View>
+        </Animated.View>
     )
 }

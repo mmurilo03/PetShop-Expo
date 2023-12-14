@@ -185,7 +185,7 @@ export const GerenciarAtendimento = () => {
                 id={item.id}
                 imagem={item.imagem}
                 nome={item.nome}
-                key={item.id}
+                key={Math.random()}
                 deleteFunc={deleteAtendimento}
                 editFunc={() => editAtendimento(item.id)}
               >

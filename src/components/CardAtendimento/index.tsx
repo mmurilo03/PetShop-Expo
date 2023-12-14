@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Image, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Image, TouchableOpacity } from "react-native";
 import { Text, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { api } from "../../api/api";
@@ -10,6 +10,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ButtonIcon } from "../ButtonIcon";
 import { ButtonTextIcon } from "../ButtonTextIcon";
 import { AuthContext } from "../../context/AuthContext";
+import Animated, { SlideInLeft } from "react-native-reanimated";
+import { Loading } from "../Loading";
 
 interface Atendimento {
   id: number;
@@ -29,7 +31,7 @@ interface AtendimentoProps {
 }
 
 export const CardAtendimento = ({
-  id,
+  id
 }: AtendimentoProps) => {
   const { user } = useContext(AuthContext);
   const [dataAtendimento, setDataAtendimento] = useState<string[]>(
@@ -76,7 +78,7 @@ export const CardAtendimento = ({
     setAtendimento(res.data.atendimento);
     setLoading(false);
   };
-  
+
   useEffect(() => {
     getAtendimento()
   }, [loading]);
@@ -96,20 +98,21 @@ export const CardAtendimento = ({
   });
 
   if (loading) {
-    return (<Text>AAAAAAAAA</Text>)
+    return (<Loading styles={{width: styles.container.width, height: styles.container.minHeight}}/>)
   }
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container} entering={SlideInLeft.duration(1000)}>
       <View style={styles.imgContainer}>
-        <Image
+        {image ? <Image
           style={styles.atendimentoImg}
           source={
             petHasImage
               ? { uri: image }
               : require("../../images/kisspng-cat-computer-icons-user-profile-5ae8658e7a9b63.4256720315251797905022.png")
           }
-        />
+        /> : <Loading styles={{width: styles.atendimentoImg.width, height: styles.atendimentoImg.height}}/>}
+        
       </View>
       <View style={styles.atendimentoName}>
         <View style={styles.atendimentoNameContent}>
@@ -177,6 +180,6 @@ export const CardAtendimento = ({
           }}
         />
       </View>
-    </View>
+    </Animated.View>
   );
 };
