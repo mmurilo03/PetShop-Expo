@@ -15,6 +15,7 @@ import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 interface Atendimento {
   id: number;
@@ -26,6 +27,8 @@ interface Atendimento {
   status: number;
   endereco: string;
   imagem: string;
+  complete: number;
+  petId: number
 }
 
 export const Home = () => {
@@ -78,8 +81,10 @@ export const Home = () => {
   });
 
   useEffect(() => {
-    getAtendimentos();
-  }, []);
+    navigation.addListener("focus", () => {
+      getAtendimentos();      
+    });
+  }, [navigation]);
 
   useEffect(() => {
     filtrar();
@@ -151,20 +156,20 @@ export const Home = () => {
               ? atendimentosFiltrados
               : atendimentos
           }
-          renderItem={({ item }) => {
+          renderItem={({ item }) => {            
             return (
-              <CardAtendimento
-                data={item.data}
-                descricao={item.descricao}
-                endereco={item.endereco}
-                id={item.id}
-                imagem={item.imagem}
-                nome={item.nome}
-                responsavel={item.responsavel}
-                status={item.status}
-                tipo={item.tipo}
-                key={item.id}
-              />
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("DetalhesAtendimento", {
+                    id: item.id,
+                  });
+                }}
+              >
+                <CardAtendimento
+                  id={item.id}
+                  key={item.id}
+                />
+              </TouchableOpacity>
             );
           }}
         />
