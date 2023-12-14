@@ -167,7 +167,7 @@ export const Home = () => {
               >
                 <CardAtendimento
                   id={item.id}
-                  key={item.id}
+                  key={Math.random()}
                 />
               </TouchableOpacity>
             );

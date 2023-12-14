@@ -18,8 +18,8 @@ import { Button } from "../../components/Button";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
-import { Starting } from "../Starting";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
+import { LoadingScreen } from "../../components/LoadingScreen";
 
 interface Entity {
   nome: string,
@@ -92,7 +92,7 @@ export const CadastrarAtendimento = () => {
   }, [])
 
   if (loadingPets || loadingResponsaveis) {
-    return (<Starting />)
+    return (<LoadingScreen />)
   }
 
   const sendForm = async () => {

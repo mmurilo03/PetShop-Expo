@@ -16,10 +16,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { Input } from "../../components/Input";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import MapView, { MapPressEvent, Marker } from "react-native-maps";
-import { Starting } from "../Starting";
 import { TextBold } from "../../components/TextBold";
 import { CardAtendimento } from "../../components/CardAtendimento";
 

@@ -9,7 +9,6 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { CustomHeader } from "../../components/CustomHeader";
 import { api } from "../../api/api";
-import { CardAtendimento } from "../../components/CardAtendimento";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { defaultTheme } from "../../global/styles/themes";
@@ -17,6 +16,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CardEnditade } from "../../components/CardEntidade";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TextBold } from "../../components/TextBold";
+import { LoadingScreen } from "../../components/LoadingScreen";
 
 interface Entity {
   nome: string;
@@ -39,10 +39,13 @@ export const Responsaveis = () => {
     [] as Entity[]
   );
   const [searchText, setSearchText] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
   const getResponsaveis = async () => {
     api.defaults.headers.common.Authorization = user.token;
     const res = await api.get("/responsavel");
     setResponsaveis(res.data.responsaveis);
+    setLoading(false)
   };
 
   const navigateLogout = () => {
@@ -71,11 +74,25 @@ export const Responsaveis = () => {
   });
 
   useEffect(() => {
-    getResponsaveis();
-  }, []);
+    navigation.addListener("focus", () => {
+      getResponsaveis();      
+    });
+  }, [navigation]);
+
+  useEffect(() => {
+    navigation.addListener("blur", () => {
+      setLoading(true)      
+    });
+  }, [navigation]);
+
   useEffect(() => {
     filtrar();
   }, [searchText]);
+
+  if (loading) {
+    return (<LoadingScreen />)
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, paddingBottom: 20 }}>
       <CustomHeader
@@ -144,7 +161,7 @@ export const Responsaveis = () => {
                 id={item.id}
                 imagem={item.imagem}
                 nome={item.nome}
-                key={item.id}
+                key={Math.random()}
               >
                 <Text><TextBold text="Email: "/>{item.email}</Text>
                 <Text><TextBold text="Função: "/>{item.funcao}</Text>

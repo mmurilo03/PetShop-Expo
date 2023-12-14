@@ -188,7 +188,7 @@ export const GerenciarResponsaveis = () => {
                 id={item.id}
                 imagem={item.imagem}
                 nome={item.nome}
-                key={item.id}
+                key={Math.random()}
                 deleteFunc={deleteResponsavel}
                 editFunc={editResponsavel}
               >

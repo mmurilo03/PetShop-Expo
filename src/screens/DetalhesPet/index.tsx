@@ -13,8 +13,8 @@ import {
 import { Input } from "../../components/Input";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import MapView, { MapPressEvent, Marker } from "react-native-maps";
-import { Starting } from "../Starting";
 import { TextBold } from "../../components/TextBold";
+import { LoadingScreen } from "../../components/LoadingScreen";
 
 type EnderecoCoord = {
   latitude: number;
@@ -79,7 +79,7 @@ export const DetalhesPet = () => {
   }, [loadingPet, userHasImage]);
 
   if (loadingPet) {
-    return <Starting />;
+    return <LoadingScreen />;
   }
 
   return (

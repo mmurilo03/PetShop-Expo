@@ -9,6 +9,8 @@ import { AuthContext } from "../../context/AuthContext";
 import { Dialog } from "react-native-simple-dialogs";
 import { Input } from "../Input";
 import { Button } from "../Button";
+import { Loading } from "../Loading";
+import Animated, { BounceIn, SlideInLeft } from "react-native-reanimated";
 
 interface Entity {
   nome: string;
@@ -33,8 +35,10 @@ export const CardGerenciamento = ({
   const [editing, setEditing] = useState(false);
   const [funcao, setFuncao] = useState("");
   const [buttonHeight, setButtonHeight] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
 
   const getImage = async () => {
+    setLoading(false)
     try {
       await api.get(`images/${imagem}`);
       setEntityHasImage(true);
@@ -48,6 +52,8 @@ export const CardGerenciamento = ({
         setImage(image);
         return image;
       } catch (error) {}
+    } else {
+      setImage("../../images/abstract-user-icon-3.png")
     }
   };
 
@@ -72,9 +78,14 @@ export const CardGerenciamento = ({
     getImage();
   });
 
+  if (loading) {
+    return (<Loading styles={{width: styles.container.width, height: styles.container.minHeight}}/>)
+  }
+
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container} entering={SlideInLeft.duration(1000)}>
       <View style={styles.imgContainer}>
+        {image ? 
         <Image
           style={styles.entityImg}
           source={
@@ -82,7 +93,8 @@ export const CardGerenciamento = ({
               ? { uri: image }
               : require("../../images/abstract-user-icon-3.png")
           }
-        />
+        /> : <Loading styles={{width: styles.imgContainer.height, height: styles.imgContainer.height}}/>
+        }
       </View>
       <View
         style={[
@@ -103,12 +115,13 @@ export const CardGerenciamento = ({
       </View>
       {user.id == 1 ? (
         <>
-          <View
+          <Animated.View
             style={styles.actionIcons}
             onLayout={(event: LayoutChangeEvent) => {
               const { height } = event.nativeEvent.layout;
               setButtonHeight(height);
             }}
+            entering={BounceIn.duration(1500)}
           >
             <ButtonIcon
               iconColor={defaultTheme.COLORS.white}
@@ -121,8 +134,8 @@ export const CardGerenciamento = ({
               width={Dimensions.get("screen").height * 0.06}
               background={defaultTheme.COLORS.graySecond}
             />
-          </View>
-          <View style={styles.actionIcons}>
+          </Animated.View>
+          <Animated.View style={styles.actionIcons} entering={BounceIn.duration(1500)}>
             <ButtonIcon
               iconColor={defaultTheme.COLORS.white}
               iconName="trash"
@@ -135,7 +148,7 @@ export const CardGerenciamento = ({
               background={defaultTheme.COLORS.red}
               border={{ topRight: 5, bottomRight: 5 }}
             />
-          </View>
+          </Animated.View>
         </>
       ) : (
         <></>
@@ -184,6 +197,6 @@ export const CardGerenciamento = ({
       ) : (
         <></>
       )}
-    </View>
+    </Animated.View>
   );
 };

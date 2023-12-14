@@ -171,7 +171,7 @@ export const GerenciarPets = () => {
                 id={item.id}
                 imagem={item.imagem}
                 nome={item.nome}
-                key={item.id}
+                key={Math.random()}
                 deleteFunc={deletePet}
                 editFunc={() => {
                   editPet(item.id);
