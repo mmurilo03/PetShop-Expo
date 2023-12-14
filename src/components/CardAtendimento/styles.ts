@@ -29,7 +29,8 @@ export const styles = StyleSheet.create({
     atendimentoNameContent: {
         alignItems: "center",
         flexDirection: "row",
-        gap:5
+        gap: 5,
+        marginBottom: 5
     },
     
     atendimentoType: {
@@ -48,6 +49,6 @@ export const styles = StyleSheet.create({
     },
 
     cardText: {
-        fontSize: 16
-    }
+        fontSize: 18
+    },
 })

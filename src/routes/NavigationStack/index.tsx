@@ -5,6 +5,8 @@ import { Login } from "../../screens/Login";
 import { Starting } from '../../screens/Starting';
 import { Responsaveis } from '../../screens/Responsaveis';
 import { Pets } from '../../screens/Pets';
+import { DetalhesPet } from '../../screens/DetalhesPet';
+import { DetalhesAtendimento } from '../../screens/DetalhesAtendimento';
 
 const {Navigator, Screen} = createNativeStackNavigator();
 
@@ -19,6 +21,8 @@ export function NavigationStack(){
       }}/>
       <Screen name="Responsaveis" component={Responsaveis} />
       <Screen name="Pets" component={Pets} />
+      <Screen name="DetalhesPet" component={DetalhesPet} />
+      <Screen name="DetalhesAtendimento" component={DetalhesAtendimento} />
     </Navigator>
   )
 }

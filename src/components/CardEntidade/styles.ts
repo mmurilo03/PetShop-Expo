@@ -5,7 +5,7 @@ import { defaultTheme } from "../../global/styles/themes";
 export const styles = StyleSheet.create({
 
     container: {
-        width: Dimensions.get("screen").width * 0.8,
+        width: Dimensions.get("screen").width * 0.9,
         minHeight: Dimensions.get("screen").height * 0.15,
         alignItems: "center",
         justifyContent: "center",
@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
     },
 
     entityName: {
-        width: "58%",
+        width: "62%",
         height: "100%",
     },
 

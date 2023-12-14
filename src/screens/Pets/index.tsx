@@ -17,6 +17,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TextBold } from "../../components/TextBold";
 import { CardPet } from "../../components/CardPet";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 interface Entity {
   nome: string;
@@ -138,6 +139,7 @@ export const Pets = () => {
           data={petsFiltrados.length > 0 ? petsFiltrados : pets}
           renderItem={({ item }) => {
             return (
+            <TouchableOpacity onPress={() => {navigation.navigate("DetalhesPet", {petId: item.id})}}>
               <CardPet
                 id={item.id}
                 imagem={item.imagem}
@@ -148,6 +150,7 @@ export const Pets = () => {
                 <Text><TextBold text="Tutor: "/>{item.tutor}</Text>
                 <Text><TextBold text="Telefone: "/>{item.telefone}</Text>
               </CardPet>
+            </TouchableOpacity>
             );
           }}
         />
