@@ -16,6 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import * as ImagePicker from "expo-image-picker"
+import { InputTelefone } from "../../components/InputTelefone";
 
 export const EditResponsavel = () => {
   const { user, updateUser } = useContext(AuthContext);
@@ -37,17 +38,18 @@ export const EditResponsavel = () => {
   const [newImage, setNewImage] = useState<string>("");
 
   const sendForm = async () => {
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     if (nome.length <= 0) {
       Alert.alert("Digite um nome")
       return
-    } else if (email.length <= 0) {
-      Alert.alert("Digite um email")
+    } else if (email.length <= 0 || reg.test(email) === false) {
+      Alert.alert("Digite um email válido")
       return
     } else if (funcao.length <= 0) {
       Alert.alert("Digite uma função")
       return
-    } else if (telefone.length <= 0) {
-      Alert.alert("Digite um telefone")
+    } else if (telefone.length != 15) {
+      Alert.alert("Digite um telefone válido")
       return
     } else if (senhaAntiga.length <= 0) {
       Alert.alert("Digite sua senha antiga")
@@ -179,7 +181,7 @@ export const EditResponsavel = () => {
             <Input label="Nome" value={nome} onChangeText={(text) => setNome(text)} placeholder="Nome" size={16}/>
             <Input label="Email" value={email} onChangeText={(text) => setEmail(text)} placeholder="Email" size={16}/>
             <Input label="Funcao" value={funcao} onChangeText={(text) => setFuncao(text)} placeholder="Funcao" size={16}/>
-            <Input label="Telefone" value={telefone} onChangeText={(text) => setTelefone(text)} placeholder="Telefone" size={16}/>
+            <InputTelefone label="Telefone" value={telefone} onChangeText={(text) => setTelefone(text)} placeholder="Telefone" size={16}/>
             <Input label="Senha antiga" value={senhaAntiga} onChangeText={(text) => setSenhaAntiga(text)} placeholder="Senha antiga" isPassword={true} size={16}/>
             <Input label="Nova senha" value={novaSenha} onChangeText={(text) => setNovaSenha(text)} placeholder="Nova senha" isPassword={true} size={16}/>
             <Input label="Confirmar senha" value={confirmarNovaSenha} onChangeText={(text) => setConfirmarNovaSenha(text)} placeholder="Confirmar senha" isPassword={true} size={16}/>

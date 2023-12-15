@@ -17,6 +17,7 @@ import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import * as ImagePicker from "expo-image-picker"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { InputTelefone } from "../../components/InputTelefone";
 
 export const CadastrarResponsavel = () => {
   const { user } = useContext(AuthContext);
@@ -36,17 +37,18 @@ export const CadastrarResponsavel = () => {
   const [newImage, setNewImage] = useState<string>("");
 
   const sendForm = async () => {
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     if (nome.length <= 0) {
       Alert.alert("Digite um nome")
       return
-    } else if (email.length <= 0) {
-      Alert.alert("Digite um email")
+    } else if (email.length <= 0 || reg.test(email) === false) {
+      Alert.alert("Digite um email válido")
       return
     } else if (funcao.length <= 0) {
       Alert.alert("Digite uma função")
       return
-    } else if (telefone.length <= 0) {
-      Alert.alert("Digite um telefone")
+    } else if (telefone.length != 15) {
+      Alert.alert("Digite um telefone válido")
       return
     } else if (senha != confirmarNovaSenha) {
       Alert.alert("Senhas não coincidem")
@@ -142,7 +144,7 @@ export const CadastrarResponsavel = () => {
             <Input label="Nome" value={nome} onChangeText={(text) => setNome(text)} placeholder="Nome" size={16}/>
             <Input label="Email" value={email} onChangeText={(text) => setEmail(text)} placeholder="Email" size={16}/>
             <Input label="Funcao" value={funcao} onChangeText={(text) => setFuncao(text)} placeholder="Funcao" size={16}/>
-            <Input label="Telefone" value={telefone} onChangeText={(text) => setTelefone(text)} placeholder="Telefone" size={16}/>
+            <InputTelefone label="Telefone" value={telefone} onChangeText={(text) => setTelefone(text)} placeholder="Telefone" size={16}/>
             <Input label="Senha" value={senha} onChangeText={(text) => setSenha(text)} placeholder="Senha" isPassword={true} size={16}/>
             <Input label="Confirmar senha" value={confirmarNovaSenha} onChangeText={(text) => setConfirmarNovaSenha(text)} placeholder="Confirmar senha" isPassword={true} size={16}/>
             <Button color={defaultTheme.COLORS.blueMain} fontSize={16} height={0.06} width={0.3} onPress={async () => await sendForm()} text="Salvar" textColor={defaultTheme.COLORS.white}/>

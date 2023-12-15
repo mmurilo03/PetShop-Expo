@@ -25,6 +25,7 @@ import MapView, { MapPressEvent, Marker } from "react-native-maps";
 import * as ExpoLocation from "expo-location";
 import { ButtonTextIcon } from "../../components/ButtonTextIcon";
 import { LoadingScreen } from "../../components/LoadingScreen";
+import { InputTelefone } from "../../components/InputTelefone";
 
 type EnderecoCoord = {
   latitude: number;
@@ -73,8 +74,8 @@ export const EditPet = () => {
     } else if (tutor.length <= 0) {
       Alert.alert("Digite o nome do tutor");
       return;
-    } else if (telefone.length <= 0) {
-      Alert.alert("Digite um telefone");
+    } else if (telefone.length != 15) {
+      Alert.alert("Digite um telefone válido");
       return;
     } else if (!markerLocation) {
       Alert.alert("Escolha o endereço no mapa");
@@ -267,7 +268,7 @@ export const EditPet = () => {
                 placeholder="Tutor"
                 size={16}
               />
-              <Input
+              <InputTelefone
                 label="Telefone"
                 value={telefone}
                 onChangeText={(text) => setTelefone(text)}
