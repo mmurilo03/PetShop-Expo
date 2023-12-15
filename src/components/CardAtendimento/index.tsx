@@ -73,10 +73,14 @@ export const CardAtendimento = ({
   };
 
   const getAtendimento = async () => {
-    api.defaults.headers.common.Authorization = user.token;
-    const res = await api.get(`/atendimento/${id}`);
-    setAtendimento(res.data.atendimento);
-    setLoading(false);
+    try {
+      api.defaults.headers.common.Authorization = user.token;
+      const res = await api.get(`/atendimento/${id}`);
+      setAtendimento(res.data.atendimento);
+      setLoading(false);
+    } catch (e) {
+      
+    }
   };
 
   useEffect(() => {
