@@ -46,9 +46,16 @@ export const Home = () => {
   >([] as Atendimento[]);
   const [searchText, setSearchText] = useState<string>("");
   const getAtendimentos = async () => {
-    api.defaults.headers.common.Authorization = user.token;
-    const res = await api.get("/atendimento");
-    setAtendimentos(res.data.atendimentos);
+    try {
+      api.defaults.headers.common.Authorization = user.token;
+      const res = await api.get("/atendimento");
+      
+      setAtendimentos(res.data.atendimentos);
+      setAtendimentosFiltrados(res.data.atendimentos)
+    } catch (e) {      
+      setAtendimentos([]);
+      setAtendimentosFiltrados([])
+    }
   };
 
   const [filtro, setFiltro] = useState<string>("todos");
@@ -59,7 +66,6 @@ export const Home = () => {
   };
 
   const filtrar = (filtro: string) => {
-    console.log(filtro);
     
     const filtrados: Atendimento[] = [];
     atendimentos.forEach((atendimento) => {
@@ -76,7 +82,6 @@ export const Home = () => {
         filtrados.push(atendimento);
       }
     });
-    console.log(filtro);
 
     let filtradosStatus: Atendimento[] = [];
     if (filtro == "pendente") {
@@ -94,8 +99,6 @@ export const Home = () => {
     } else {
       filtradosStatus = filtrados
     }
-    console.log(filtradosStatus);
-
     setAtendimentosFiltrados(filtradosStatus);
   };
 
