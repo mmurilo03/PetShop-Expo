@@ -34,5 +34,12 @@ export const styles = StyleSheet.create({
         gap: 10,
         paddingTop: 14,
         padding: "10%"
+    },
+    filter: {
+        marginTop: 10,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 5
     }
 })

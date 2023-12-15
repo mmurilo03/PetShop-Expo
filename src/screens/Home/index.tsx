@@ -16,6 +16,7 @@ import { defaultTheme } from "../../global/styles/themes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Button } from "../../components/Button";
 
 interface Atendimento {
   id: number;
@@ -28,7 +29,7 @@ interface Atendimento {
   endereco: string;
   imagem: string;
   complete: number;
-  petId: number
+  petId: number;
 }
 
 export const Home = () => {
@@ -50,12 +51,16 @@ export const Home = () => {
     setAtendimentos(res.data.atendimentos);
   };
 
+  const [filtro, setFiltro] = useState<string>("todos");
+
   const navigateLogout = () => {
     logout();
     navigation.navigate("Login");
   };
 
-  const filtrar = () => {
+  const filtrar = (filtro: string) => {
+    console.log(filtro);
+    
     const filtrados: Atendimento[] = [];
     atendimentos.forEach((atendimento) => {
       if (
@@ -71,7 +76,27 @@ export const Home = () => {
         filtrados.push(atendimento);
       }
     });
-    setAtendimentosFiltrados(filtrados);
+    console.log(filtro);
+
+    let filtradosStatus: Atendimento[] = [];
+    if (filtro == "pendente") {
+      filtrados.forEach((atendimento) => {
+        if (atendimento.status == 0) {
+          filtradosStatus.push(atendimento);
+        }
+      });
+    } else if (filtro == "concluido") {
+      filtrados.forEach((atendimento) => {
+        if (atendimento.status == 1) {
+          filtradosStatus.push(atendimento);
+        }
+      });
+    } else {
+      filtradosStatus = filtrados
+    }
+    console.log(filtradosStatus);
+
+    setAtendimentosFiltrados(filtradosStatus);
   };
 
   useEffect(() => {
@@ -82,13 +107,13 @@ export const Home = () => {
 
   useEffect(() => {
     navigation.addListener("focus", () => {
-      getAtendimentos();      
+      getAtendimentos();
     });
   }, [navigation]);
 
   useEffect(() => {
-    filtrar();
-  }, [searchText]);
+    filtrar(filtro);
+  }, [searchText, filtro]);
 
   return (
     <SafeAreaView style={{ flex: 1, paddingBottom: 20 }}>
@@ -149,14 +174,45 @@ export const Home = () => {
             textColor={defaultTheme.COLORS.black}
           />
         </ScrollView>
+        <View style={styles.filter}>
+          <Button
+            color={defaultTheme.COLORS.blueMain}
+            fontSize={16}
+            height={0.05}
+            width={0.25}
+            text="Todos"
+            textColor={defaultTheme.COLORS.white}
+            onPress={() => {
+              setFiltro("todos");
+            }}
+          />
+          <Button
+            color={defaultTheme.COLORS.blueMain}
+            fontSize={16}
+            height={0.05}
+            width={0.25}
+            text="Pendentes"
+            textColor={defaultTheme.COLORS.white}
+            onPress={() => {
+              setFiltro("pendente");
+            }}
+          />
+          <Button
+            color={defaultTheme.COLORS.blueMain}
+            fontSize={16}
+            height={0.05}
+            width={0.25}
+            text="Concluidos"
+            textColor={defaultTheme.COLORS.white}
+            onPress={() => {
+              setFiltro("concluido");
+            }}
+          />
+        </View>
         <FlatList
           contentContainerStyle={styles.scrollStyle}
-          data={
-            searchText.length > 0
-              ? atendimentosFiltrados
-              : atendimentos
-          }
-          renderItem={({ item }) => {            
+          data={atendimentosFiltrados}
+          renderItem={({ item }) => {
             return (
               <TouchableOpacity
                 onPress={() => {
@@ -165,10 +221,7 @@ export const Home = () => {
                   });
                 }}
               >
-                <CardAtendimento
-                  id={item.id}
-                  key={Math.random()}
-                />
+                <CardAtendimento id={item.id} key={Math.random()} />
               </TouchableOpacity>
             );
           }}
